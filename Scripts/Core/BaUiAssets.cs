@@ -1,5 +1,5 @@
-﻿using Capisoft.Lib.BaUi.Core;
-using Capisoft.Lib.BaUi.Layout;
+using Capisoft.Lib.BaUnifiedUI.Core;
+using Capisoft.Lib.BaUnifiedUI.Layout;
 using System;
 using Helpers;
 using TMPro;
@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Capisoft.Lib.BaUi.Assets
+namespace Capisoft.Lib.BaUnifiedUI.Assets
 {
     /// <summary>Sprites et polices vanilla (grey-round-bordered, Gradient-Blue-Round, Rubik).</summary>
     public static class BaUiAssets
@@ -428,7 +428,7 @@ namespace Capisoft.Lib.BaUi.Assets
             }
             catch
             {
-                // ressources pas encore prÃªtes
+                // ressources pas encore prêtes
             }
 
             try
@@ -455,7 +455,7 @@ namespace Capisoft.Lib.BaUi.Assets
             }
             catch
             {
-                // polices pas encore prÃªtes
+                // polices pas encore prêtes
             }
 
             ResolvePreferredFocusIcon();

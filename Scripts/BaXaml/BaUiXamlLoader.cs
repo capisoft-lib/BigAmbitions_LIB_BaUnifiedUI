@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Capisoft.Lib.BaUi.Fluent;
+using Capisoft.Lib.BaUnifiedUI.Fluent;
 
-namespace Capisoft.Lib.BaUi.BaXaml
+namespace Capisoft.Lib.BaUnifiedUI.BaXaml
 {
     /// <summary>Runtime registry for precompiled BaXaml documents (generated *.g.cs).</summary>
     public static class BaUiXamlRegistry

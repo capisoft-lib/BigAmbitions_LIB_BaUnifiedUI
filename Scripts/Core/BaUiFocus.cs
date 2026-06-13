@@ -1,7 +1,7 @@
-﻿using UnityEngine.Events;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace Capisoft.Lib.BaUi.Core
+namespace Capisoft.Lib.BaUnifiedUI.Core
 {
     /// <summary>
     /// Clears UI EventSystem selection so WASD/arrows and click-to-move work again.

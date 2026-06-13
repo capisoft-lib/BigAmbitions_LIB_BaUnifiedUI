@@ -1,8 +1,8 @@
-using Capisoft.Lib.BaUi.Fluent;
-using Capisoft.Lib.BaUi.Layout;
-using Capisoft.Lib.BaUi.Localization;
+using Capisoft.Lib.BaUnifiedUI.Fluent;
+using Capisoft.Lib.BaUnifiedUI.Layout;
+using Capisoft.Lib.BaUnifiedUI.Localization;
 
-namespace Capisoft.Lib.BaUi.BaXaml.Generated
+namespace Capisoft.Lib.BaUnifiedUI.BaXaml.Generated
 {
     /// <summary>Precompiled from Panels/GpsHud.baxaml (pilot document).</summary>
     public static class GpsHudDocument

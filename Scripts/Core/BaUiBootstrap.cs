@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Capisoft.Lib.BaUi.Core
+namespace Capisoft.Lib.BaUnifiedUI.Core
 {
     /// <summary>Ensures an EventSystem exists for mod overlay UI.</summary>
     public static class BaUiBootstrap

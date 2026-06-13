@@ -1,14 +1,14 @@
 using System;
-using Capisoft.Lib.BaUi.Assets;
-using Capisoft.Lib.BaUi.Chrome;
-using Capisoft.Lib.BaUi.Fluent;
-using Capisoft.Lib.BaUi.Layout;
+using Capisoft.Lib.BaUnifiedUI.Assets;
+using Capisoft.Lib.BaUnifiedUI.Chrome;
+using Capisoft.Lib.BaUnifiedUI.Fluent;
+using Capisoft.Lib.BaUnifiedUI.Layout;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Capisoft.Lib.BaUi.Controls
+namespace Capisoft.Lib.BaUnifiedUI.Controls
 {
     public static class BaUiControls
     {
@@ -141,7 +141,9 @@ namespace Capisoft.Lib.BaUi.Controls
             var iconRect = iconGo.GetComponent<RectTransform>();
             iconRect.anchorMin = Vector2.zero;
             iconRect.anchorMax = Vector2.one;
-            iconRect.offsetMin = iconRect.offsetMax = Vector2.zero;
+            var iconPad = BaUiLayout.HeaderIconInnerPad * scale;
+            iconRect.offsetMin = new Vector2(iconPad, iconPad);
+            iconRect.offsetMax = new Vector2(-iconPad, -iconPad);
             var icon = iconGo.AddComponent<Image>();
             icon.raycastTarget = false;
 
@@ -152,10 +154,11 @@ namespace Capisoft.Lib.BaUi.Controls
                 var fbRect = fb.GetComponent<RectTransform>();
                 fbRect.anchorMin = Vector2.zero;
                 fbRect.anchorMax = Vector2.one;
-                fbRect.offsetMin = fbRect.offsetMax = Vector2.zero;
+                fbRect.offsetMin = new Vector2(iconPad, iconPad);
+                fbRect.offsetMax = new Vector2(-iconPad, -iconPad);
                 var tmp = fb.AddComponent<TextMeshProUGUI>();
                 tmp.text = fallbackGlyph;
-                tmp.fontSize = 14f * scale;
+                tmp.fontSize = 13f * scale;
                 tmp.color = BaUiAssets.TitleColor;
                 tmp.alignment = TextAlignmentOptions.Center;
                 tmp.raycastTarget = false;

@@ -1,8 +1,8 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Capisoft.Lib.BaUi.Core
+namespace Capisoft.Lib.BaUnifiedUI.Core
 {
     /// <summary>
     /// Keeps the input field registered as the EventSystem selection while focused so

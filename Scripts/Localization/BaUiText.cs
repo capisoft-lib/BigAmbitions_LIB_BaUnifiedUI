@@ -1,7 +1,7 @@
 using Localizor;
 using UnityEngine;
 
-namespace Capisoft.Lib.BaUi.Localization
+namespace Capisoft.Lib.BaUnifiedUI.Localization
 {
     /// <summary>Shared localization helper for mod UI strings.</summary>
     public static class BaUiText

@@ -1,10 +1,10 @@
-﻿using Capisoft.Lib.BaUi.Assets;
-using Capisoft.Lib.BaUi.Layout;
+using Capisoft.Lib.BaUnifiedUI.Assets;
+using Capisoft.Lib.BaUnifiedUI.Layout;
 using Helpers;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Capisoft.Lib.BaUi.Chrome
+namespace Capisoft.Lib.BaUnifiedUI.Chrome
 {
     public static class BaUiChrome
     {
@@ -98,7 +98,7 @@ namespace Capisoft.Lib.BaUi.Chrome
             return chrome;
         }
 
-        /// <summary>Centered Voogle modal popup â€” right edge fixed, left-only flush extension.</summary>
+        /// <summary>Centered Voogle modal popup — right edge fixed, left-only flush extension.</summary>
         public static void ApplyModalHeaderFrame(RectTransform header, float scale)
         {
             var leftExtend = BaUiLayout.SettingsHeaderLeftFlush * scale;
@@ -141,7 +141,7 @@ namespace Capisoft.Lib.BaUi.Chrome
 
         /// <summary>
         /// Header aligned to BaUiLayout visible body frame edges (ref panel 370).
-        /// Uses BodyVisibleLeft/Right â€” the calibrated reference, not bleed or toggle guesses.
+        /// Uses BodyVisibleLeft/Right — the calibrated reference, not bleed or toggle guesses.
         /// </summary>
         public static void ApplyVisibleFrameHeader(RectTransform header, float scale)
         {
@@ -178,7 +178,7 @@ namespace Capisoft.Lib.BaUi.Chrome
             header.offsetMax = new Vector2(-rightInset, 0f);
         }
 
-        /// <summary>Toggle / docked HUD â€” header inset to visible frame borders (same as RouteToggleHud).</summary>
+        /// <summary>Toggle / docked HUD — header inset to visible frame borders (same as RouteToggleHud).</summary>
         public static void ApplyToggleHudHeaderFrame(RectTransform header, float scale)
         {
             var leftInset = BaUiLayout.HeaderSliceBorderLeft * scale + BaUiLayout.ToggleHudHeaderLeftAdjust;
@@ -193,7 +193,7 @@ namespace Capisoft.Lib.BaUi.Chrome
             header.offsetMax = new Vector2(-rightInset, 0f);
         }
 
-        /// <summary>Main panel or wide HUD â€” header edges align with visible body frame (ref-pixel constants).</summary>
+        /// <summary>Main panel or wide HUD — header edges align with visible body frame (ref-pixel constants).</summary>
         public static void ApplyMainPanelHeaderFrame(RectTransform header)
         {
             var leftExtend = BaUiLayout.FrameBleedWidth * 0.5f - BaUiLayout.FrameOffsetX -
@@ -228,8 +228,10 @@ namespace Capisoft.Lib.BaUi.Chrome
                 headerExtraTrim,
                 out var sizeDeltaX,
                 out var posX);
+            header.offsetMin = new Vector2(0f, -metrics.HeaderHeight);
+            header.offsetMax = Vector2.zero;
             header.anchoredPosition = new Vector2(posX, 0f);
-            header.sizeDelta = new Vector2(sizeDeltaX, metrics.HeaderHeight);
+            header.sizeDelta = new Vector2(sizeDeltaX, 0f);
 
             if (IsSettingsFullWidthHeader(headerExtraTrim))
                 ApplySettingsHeaderLeftFlush(header, metrics);
@@ -238,7 +240,7 @@ namespace Capisoft.Lib.BaUi.Chrome
         private static bool IsSettingsFullWidthHeader(float headerExtraTrim) =>
             Mathf.Abs(headerExtraTrim - BaUiLayout.SettingsPanelHeaderWidenTrim) < 0.01f;
 
-        /// <summary>Colle le bord gauche du header sans dÃ©placer le bord droit (validÃ© en jeu).</summary>
+        /// <summary>Colle le bord gauche du header sans déplacer le bord droit (validé en jeu).</summary>
         private static void ApplySettingsHeaderLeftFlush(RectTransform header, in BaUiLayout.Metrics metrics)
         {
             var extend = BaUiLayout.SettingsHeaderLeftFlush * metrics.Scale;

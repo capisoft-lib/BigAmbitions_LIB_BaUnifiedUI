@@ -1,12 +1,12 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using BAModAPI;
-using Capisoft.Lib.BaUi.BaXaml.Generated;
-using Capisoft.Lib.BaUi.Core;
+using Capisoft.Lib.BaUnifiedUI.BaXaml.Generated;
+using Capisoft.Lib.BaUnifiedUI.Core;
 using UnityEngine;
 
-[assembly: RegisterModClass(typeof(Capisoft.Lib.BaUi.BaUiLibraryMod))]
+[assembly: RegisterModClass(typeof(Capisoft.Lib.BaUnifiedUI.BaUiLibraryMod))]
 
-namespace Capisoft.Lib.BaUi
+namespace Capisoft.Lib.BaUnifiedUI
 {
     [ModEntryOnCityLoad]
     public sealed class BaUiLibraryMod : IModBigAmbitions

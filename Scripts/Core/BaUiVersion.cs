@@ -1,4 +1,4 @@
-namespace Capisoft.Lib.BaUi.Core
+namespace Capisoft.Lib.BaUnifiedUI.Core
 {
     public static class BaUiVersion
     {

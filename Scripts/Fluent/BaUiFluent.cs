@@ -1,15 +1,15 @@
 using System;
-using Capisoft.Lib.BaUi.Assets;
-using Capisoft.Lib.BaUi.Chrome;
-using Capisoft.Lib.BaUi.Controls;
-using Capisoft.Lib.BaUi.Core;
-using Capisoft.Lib.BaUi.Layout;
+using Capisoft.Lib.BaUnifiedUI.Assets;
+using Capisoft.Lib.BaUnifiedUI.Chrome;
+using Capisoft.Lib.BaUnifiedUI.Controls;
+using Capisoft.Lib.BaUnifiedUI.Core;
+using Capisoft.Lib.BaUnifiedUI.Layout;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Capisoft.Lib.BaUi.Fluent
+namespace Capisoft.Lib.BaUnifiedUI.Fluent
 {
     public sealed class BaUiBuiltPanel
     {
@@ -18,10 +18,11 @@ namespace Capisoft.Lib.BaUi.Fluent
         public RectTransform Header { get; internal set; }
         public RectTransform Body { get; internal set; }
         public float Scale { get; internal set; }
+        public float ContentInset { get; internal set; }
         public BaUiLayout.Metrics Metrics { get; internal set; }
     }
 
-    public static class BaUi
+    public static partial class BaUi
     {
         public static BaOverlayBuilder Overlay(string rootName, int sortOrder) =>
             new BaOverlayBuilder(rootName, sortOrder, modal: false);
@@ -48,6 +49,8 @@ namespace Capisoft.Lib.BaUi.Fluent
         private float _headerExtraTrim;
         private Action<BaHeaderBuilder> _header;
         private Action<BaBodyBuilder> _body;
+        private UnityAction _onDismiss;
+        private bool _skipBody;
 
         internal BaOverlayBuilder(string rootName, int sortOrder, bool modal, float dimmerAlpha = 0.55f)
         {
@@ -90,6 +93,18 @@ namespace Capisoft.Lib.BaUi.Fluent
             return this;
         }
 
+        public BaOverlayBuilder SkipBody()
+        {
+            _skipBody = true;
+            return this;
+        }
+
+        public BaOverlayBuilder OnDismiss(UnityAction onDismiss)
+        {
+            _onDismiss = onDismiss;
+            return this;
+        }
+
         public BaUiBuiltPanel Build()
         {
             BaUiBootstrap.EnsureEventSystem();
@@ -99,7 +114,9 @@ namespace Capisoft.Lib.BaUi.Fluent
             UnityEngine.Object.DontDestroyOnLoad(root);
             BaUiChrome.SetupOverlayCanvas(root, _sortOrder);
 
-            if (_modal)
+            if (_modal && _onDismiss != null)
+                BaUiWidgets.CreateModalDimmer(root.transform, _dimmerAlpha, _onDismiss);
+            else if (_modal)
             {
                 var dimGo = new GameObject("Dimmer", typeof(RectTransform));
                 dimGo.transform.SetParent(root.transform, false);
@@ -109,8 +126,7 @@ namespace Capisoft.Lib.BaUi.Fluent
                 dimRect.offsetMin = dimRect.offsetMax = Vector2.zero;
                 var dimImg = dimGo.AddComponent<Image>();
                 dimImg.color = new Color(0f, 0f, 0f, _dimmerAlpha);
-                var dimBtn = dimGo.AddComponent<Button>();
-                dimBtn.transition = Selectable.Transition.None;
+                dimGo.AddComponent<Button>().transition = Selectable.Transition.None;
             }
 
             if (_panelHeight <= 0f)
@@ -125,7 +141,9 @@ namespace Capisoft.Lib.BaUi.Fluent
             else if (_recipe == BaPanelRecipe.MainPanel)
                 BaUiChrome.ApplyMainPanelHeaderFrame(chrome.Header);
 
-            var body = CreateBodyRect(chrome.Panel, chrome.Scale);
+            RectTransform body = null;
+            if (!_skipBody)
+                body = CreateBodyRect(chrome.Panel, chrome.Scale);
 
             var built = new BaUiBuiltPanel
             {
@@ -134,13 +152,15 @@ namespace Capisoft.Lib.BaUi.Fluent
                 Header = chrome.Header,
                 Body = body,
                 Scale = chrome.Scale,
+                ContentInset = chrome.ContentInset,
                 Metrics = chrome.Metrics
             };
 
             ApplyDock(chrome.Panel);
 
             _header?.Invoke(new BaHeaderBuilder(chrome.Header, chrome.Scale));
-            _body?.Invoke(new BaBodyBuilder(body, chrome.Scale, chrome.Metrics));
+            if (body != null)
+                _body?.Invoke(new BaBodyBuilder(body, chrome.Scale, chrome.Metrics));
 
             BaUiChrome.ApplyUiLayer(root);
             return built;
@@ -206,15 +226,36 @@ namespace Capisoft.Lib.BaUi.Fluent
             return this;
         }
 
+        public BaHeaderBuilder TitleLeft(string text, int rightIconCount, bool upperCase = true)
+        {
+            _iconCount = rightIconCount;
+            BaUiWidgets.CreateHeaderTitleLeft(_header, text, _scale, rightIconCount, upperCase);
+            return this;
+        }
+
+        public BaHeaderBuilder TitleCenter(string text)
+        {
+            var label = BaUiWidgets.CreateHeaderTitleCenter(_header, _scale);
+            label.text = text;
+            return this;
+        }
+
         public BaHeaderBuilder CloseButton(UnityAction onClick, float extraOffsetX = 0f)
         {
             BaUiAssets.CreateHeaderCloseButton(_header, _scale, onClick, extraOffsetX);
             return this;
         }
 
-        public BaHeaderBuilder IconButton(BaIcons icon, int slot, UnityAction onClick, string fallbackGlyph = null)
+        public BaHeaderBuilder IconButton(
+            BaIcons icon,
+            int slot,
+            UnityAction onClick,
+            string fallbackGlyph = null,
+            BaButtonStyle? styleOverride = null)
         {
-            Action<Image> style = BaUiAssets.ApplyButtonGrey;
+            Action<Image> style = styleOverride.HasValue
+                ? StyleAction(styleOverride.Value)
+                : BaUiAssets.ApplyButtonGrey;
             Func<Image, bool> apply = icon switch
             {
                 BaIcons.Settings => img => BaUiAssets.TryApplyOverlayIcon(img, BaUiAssets.ApplySettingsIcon),
@@ -225,14 +266,25 @@ namespace Capisoft.Lib.BaUi.Fluent
                 BaIcons.History => img => BaUiAssets.TryApplyOverlayIcon(img, BaUiAssets.ApplyHistoryIcon),
                 _ => img => false
             };
-            if (icon == BaIcons.Add)
-                style = BaUiAssets.ApplyButtonGreen;
-            else if (icon == BaIcons.Pin || icon == BaIcons.Car)
-                style = BaUiAssets.ApplyButtonBlue;
+            if (!styleOverride.HasValue)
+            {
+                if (icon == BaIcons.Add)
+                    style = BaUiAssets.ApplyButtonGreen;
+                else if (icon == BaIcons.Pin || icon == BaIcons.Car)
+                    style = BaUiAssets.ApplyButtonBlue;
+            }
 
             BaUiControls.CreateHeaderIconButton(_header, slot, _scale, style, apply, onClick, fallbackGlyph);
             return this;
         }
+
+        private static Action<Image> StyleAction(BaButtonStyle style) => style switch
+        {
+            BaButtonStyle.Grey => BaUiAssets.ApplyButtonGrey,
+            BaButtonStyle.Green => BaUiAssets.ApplyButtonGreen,
+            BaButtonStyle.Red => BaUiAssets.ApplyButtonRed,
+            _ => BaUiAssets.ApplyButtonBlue
+        };
 
         public int IconCount => _iconCount;
     }

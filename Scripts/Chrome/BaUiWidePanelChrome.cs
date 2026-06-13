@@ -1,6 +1,6 @@
-﻿using Capisoft.Lib.BaUi.Assets;
-using Capisoft.Lib.BaUi.Core;
-using Capisoft.Lib.BaUi.Layout;
+using Capisoft.Lib.BaUnifiedUI.Assets;
+using Capisoft.Lib.BaUnifiedUI.Core;
+using Capisoft.Lib.BaUnifiedUI.Layout;
 using System;
 using Helpers;
 using TMPro;
@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Capisoft.Lib.BaUi.Chrome
+namespace Capisoft.Lib.BaUnifiedUI.Chrome
 {
     public enum BaVanillaButtonStyle
     {
@@ -210,7 +210,7 @@ namespace Capisoft.Lib.BaUi.Chrome
         }
 
         /// <summary>
-        /// Toggle HUD header â€” inset to visible frame borders (narrower than panel bleed rect).
+        /// Toggle HUD header — inset to visible frame borders (narrower than panel bleed rect).
         /// </summary>
         public static void ApplyToggleHudHeaderFrame(RectTransform header, float panelWidth)
         {
@@ -373,7 +373,7 @@ namespace Capisoft.Lib.BaUi.Chrome
 
         /// <summary>
         /// Header edges aligned to the visible frame. Bleed uses ref-pixel constants (not panel-width scale)
-        /// so a 2Ã—-wide panel does not over-stretch the title bar past the body frame.
+        /// so a 2×-wide panel does not over-stretch the title bar past the body frame.
         /// </summary>
         public static void ApplyMainPanelHeaderFrame(RectTransform header, float panelWidth)
         {

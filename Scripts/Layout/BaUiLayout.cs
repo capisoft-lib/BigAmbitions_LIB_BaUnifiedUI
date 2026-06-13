@@ -1,7 +1,7 @@
-﻿using Capisoft.Lib.BaUi.Chrome;
+using Capisoft.Lib.BaUnifiedUI.Chrome;
 using UnityEngine;
 
-namespace Capisoft.Lib.BaUi.Layout
+namespace Capisoft.Lib.BaUnifiedUI.Layout
 {
     /// <summary>Gabarit du panneau VOOGLE ROUTE (recette vanilla MoreByUs).</summary>
     public static class BaUiLayout
@@ -28,8 +28,8 @@ namespace Capisoft.Lib.BaUi.Layout
         public const float FrameOffsetY = -13f;
         public const float FramePixelsPerUnit = 2.45f;
 
-        public const float HeaderTrimWidthBase = 11f;
-        public const float HeaderTrimOffsetXBase = -0.5f;
+        public const float HeaderTrimWidthBase = 10f;
+        public const float HeaderTrimOffsetXBase = 0f;
         public const float HeaderLeftExtend = 2f;
         public const float BodyVisibleLeft = 26f;
         public const float BodyVisibleRight = 373f;
@@ -40,16 +40,18 @@ namespace Capisoft.Lib.BaUi.Layout
         public const float MainPanelHeaderTightenLeft = 3f;
         public const float MainPanelHeaderTightenRight = 5f;
         public const float SettingsHeaderTightenPerSide = 2f;
-        /// <summary>Ã‰largit le header settings pour supprimer le gap latÃ©ral (px ref panel 370, nÃ©gatif = plus large).</summary>
+        /// <summary>Élargit le header settings pour supprimer le gap latéral (px ref panel 370, négatif = plus large).</summary>
         public static float SettingsPanelHeaderWidenTrim => -(HeaderTrimWidthBase - HeaderLeftExtend);
-        /// <summary>Extension gauche seule du header settings (px ref panel 370, droite inchangÃ©e).</summary>
+        /// <summary>Extension gauche seule du header settings (px ref panel 370, droite inchangée).</summary>
         public const float SettingsHeaderLeftFlush = 2f;
-        /// <summary>Ajustement vertical icÃ´ne engrenage (px ref panel 370, nÃ©gatif = vers le bas).</summary>
+        /// <summary>Ajustement vertical icône engrenage (px ref panel 370, négatif = vers le bas).</summary>
         public const float SettingsIconOffsetY = 1f;
 
-        public const float HeaderIconButtonSize = 32f;
+        public const float HeaderIconButtonSize = 30f;
         public const float HeaderIconButtonPad = 8f;
         public const float HeaderIconButtonGap = 4f;
+        /// <summary>Inset inside header icon buttons so glyphs/sprites read smaller than the hit target.</summary>
+        public const float HeaderIconInnerPad = 7f;
         /// <summary>Extra header width per side on 420px map panels (screen px).</summary>
         public const float WideMapPanelHeaderWidenPerSide = 2f;
 

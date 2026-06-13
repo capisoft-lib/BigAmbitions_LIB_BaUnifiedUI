@@ -1,4 +1,4 @@
-namespace Capisoft.Lib.BaUi.Fluent
+namespace Capisoft.Lib.BaUnifiedUI.Fluent
 {
     public enum BaPanelRecipe
     {

@@ -6,7 +6,7 @@ Repository: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI
 
 ## Namespace
 
-`Capisoft.Lib.BaUi.*` — `.Assets`, `.Chrome`, `.Layout`, `.Controls`, `.Fluent`, `.Localization`, `.BaXaml`
+`Capisoft.Lib.BaUnifiedUI.*` — `.Assets`, `.Chrome`, `.Layout`, `.Controls`, `.Fluent`, `.Localization`, `.BaXaml`
 
 ## Deploy
 
