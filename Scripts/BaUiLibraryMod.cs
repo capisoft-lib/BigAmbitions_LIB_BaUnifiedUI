@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BAModAPI;
 using Capisoft.Lib.BaUi.BaXaml.Generated;
 using Capisoft.Lib.BaUi.Core;
@@ -17,14 +17,15 @@ namespace Capisoft.Lib.BaUi
         {
             BaUiBootstrap.EnsureEventSystem();
             GpsHudDocument.EnsureRegistered();
-            Debug.Log("[LIB_BaUi] UI library " + BaUiVersion.Version + " loaded.");
+            Debug.Log("[LIB_BaUnifiedUI] UI library " + BaUiVersion.Version + " loaded.");
             return Task.CompletedTask;
         }
 
         public Task OnUnloadAsync()
         {
-            Debug.Log("[LIB_BaUi] UI library unloaded.");
+            Debug.Log("[LIB_BaUnifiedUI] UI library unloaded.");
             return Task.CompletedTask;
         }
     }
 }
+

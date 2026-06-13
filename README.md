@@ -1,6 +1,8 @@
-# LIB_BaUi
+﻿# LIB_BaUnifiedUI
 
 Shared Big Ambitions mod UI library — vanilla chrome, fluent builders, BaXaml pilot.
+
+Repository: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI
 
 ## Namespace
 
@@ -9,7 +11,7 @@ Shared Big Ambitions mod UI library — vanilla chrome, fluent builders, BaXaml 
 ## Deploy
 
 ```powershell
-.\sdk-overlay\bigambitions\scripts\compile-install-lib-ba-ui.ps1
+.\sdk-overlay\bigambitions\scripts\compile-install-lib-ba-unified-ui.ps1
 ```
 
 Deploy **before** consumer mods (VoogleRoute, BetterFines, AutoShopping, CasinoAutoPlay).
@@ -28,7 +30,3 @@ var panel = BaUi.Overlay("MyHud", sortOrder: 9000)
 ## BaXaml (phase 2 pilot)
 
 `BaUi.LoadFromBaXaml("GpsHud")` — see `Panels/GpsHud.baxaml` and `Scripts/BaXaml/Generated/GpsHud.g.cs`.
-
-## Branch
-
-Development: `feature/lib-baui`
