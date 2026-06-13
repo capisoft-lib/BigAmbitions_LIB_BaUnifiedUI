@@ -1,0 +1,11 @@
+<!-- Panels/GpsHud.baxaml — pilot BaXaml document (compiled to GpsHud.g.cs) -->
+<ba:Panel recipe="DockedHud" width="370" x:Name="GpsHud">
+  <ba:Header title="{Loc:voogle_route_panel_title}">
+    <ba:IconButton icon="Settings" slot="0" />
+  </ba:Header>
+  <ba:Body>
+    <ba:VanillaButton text="{Loc:voogle_route_route_on}" style="Blue" />
+    <ba:Gap value="8" />
+    <ba:VanillaButton text="{Loc:voogle_route_autowalk}" style="Grey" />
+  </ba:Body>
+</ba:Panel>
