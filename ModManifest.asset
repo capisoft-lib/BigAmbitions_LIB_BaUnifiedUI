@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -15,11 +15,11 @@ MonoBehaviour:
   ModId: LIB_BaUnifiedUI
   DisplayName: LIB BA Unified UI
   Author: capisoft-lib
-  Version: 0.1.0
+  Version: 0.1.4
   AssetBundleName: 
-  ModAssembly: {fileID: 5897886265953266890, guid: f1e2d3c4b5a6478890ab1c2d3e4f5a6b, type: 3}
+  ModAssembly: {fileID: 5897886265953266890, guid: f1e2d3c4b5a6478890ab1c2d3e4f5a6b,
+    type: 3}
   LocalesFolder: {fileID: 0}
   DependenciesFolder: {fileID: 0}
   EnumsFile: {fileID: 0}
   TargetPlatforms: 1
-

@@ -222,10 +222,14 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
             BaUiAssets.CreateButtonGraphic(parent, scale, StyleAction(style), bleedBottom: bleedBottom);
 
         public static void RestoreWideMapChrome(RectTransform panel, float panelWidth) =>
-            BaUiChrome.RestorePanelChrome(
-                panel,
-                panelWidth,
-                BaUiLayout.ComputeWideMapPanelHeaderWidenTrim(panelWidth));
+            RestoreDockedPanelChrome(panel, panelWidth, wideMapPanel: true);
+
+        /// <summary>Same chrome restore as map panels — frame + header bg after layout settles.</summary>
+        public static void RestoreDockedPanelChrome(RectTransform panel, float panelWidth, bool wideMapPanel = false)
+        {
+            var trim = wideMapPanel ? BaUiLayout.ComputeWideMapPanelHeaderWidenTrim(panelWidth) : 0f;
+            BaUiChrome.RestorePanelChrome(panel, panelWidth, trim);
+        }
 
         public static bool TryGetCarIcon(out Sprite sprite) => BaUiAssets.TryGetCarIcon(out sprite);
 

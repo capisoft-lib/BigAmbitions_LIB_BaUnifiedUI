@@ -3,6 +3,7 @@ using Capisoft.Lib.BaUnifiedUI.Layout;
 using System;
 using Helpers;
 using TMPro;
+using UI.Guiders;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -30,10 +31,20 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         public static readonly Color MutedBodyTextColor = new Color(0.75f, 0.78f, 0.82f, 1f);
         public static readonly Color CarPoiBackgroundColor = new Color(0.25f, 0.58f, 0.82f, 1f);
 
+        public static readonly Color BizManLightPanelBg = Color.white;
+        public static readonly Color BizManLightHeaderBg = new Color(0.90f, 0.91f, 0.93f, 1f);
+        public static readonly Color BizManLightTitleColor = new Color(0.20f, 0.22f, 0.26f, 1f);
+        public static readonly Color BizManLightBodyTextColor = new Color(0.24f, 0.26f, 0.30f, 1f);
+        public static readonly Color BizManLightMutedTextColor = new Color(0.42f, 0.45f, 0.50f, 1f);
+        private static readonly Color HeaderFallbackTint = new Color(0.78f, 0.8f, 0.83f, 1f);
+
         public const float RowCloseButtonSize = 28f;
 
         private static bool _initialized;
         private static bool _wasReady;
+        private static Sprite _solidSprite;
+        private static Sprite _embeddedPinOverlaySprite;
+        private static Sprite _embeddedAddOverlaySprite;
         private static Sprite _panelBg;
         private static Sprite _headerBg;
         private static Sprite _iconBg;
@@ -46,6 +57,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         private static Sprite _addIcon;
         private static Sprite _carIcon;
         private static Sprite _focusIcon;
+        private static Sprite _searchIcon;
         private static Sprite _historyIcon;
         private static TMP_FontAsset _fontRegular;
         private static TMP_FontAsset _fontBold;
@@ -61,12 +73,13 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             if (!_initialized)
                 _initialized = true;
 
-            if (IsReady)
-                return;
+            var hadHeader = _headerBg != null;
+            if (!IsReady)
+                Discover();
+            else if (!hadHeader)
+                ResolvePreferredHeaderBg();
 
-            Discover();
-
-            if (IsReady && !_wasReady)
+            if ((IsReady && !_wasReady) || (!hadHeader && _headerBg != null))
                 ShouldRebuildHud = true;
             _wasReady = IsReady;
         }
@@ -79,11 +92,70 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             image.pixelsPerUnitMultiplier = BaUiLayout.FramePixelsPerUnit;
         }
 
-        public static void ApplyHeaderBg(Image image)
+        public static void ApplyBizManLightPanelBg(Image image)
         {
-            ApplySliced(image, _headerBg, new Color(0.78f, 0.8f, 0.83f, 1f));
-            image.pixelsPerUnitMultiplier = BaUiLayout.FramePixelsPerUnit;
+            image.sprite = null;
+            image.color = BizManLightPanelBg;
+            image.type = Image.Type.Simple;
         }
+
+        public static void ApplyBizManLightHeaderBg(Image image)
+        {
+            image.sprite = null;
+            image.color = BizManLightHeaderBg;
+            image.type = Image.Type.Simple;
+        }
+
+        /// <summary>Vanilla sliced header — child fills header rect (parent is layout-only).</summary>
+        public static void BuildHeaderBackground(RectTransform header, float scale)
+        {
+            if (_headerBg == null)
+                ResolvePreferredHeaderBg();
+
+            var image = header.GetComponent<Image>();
+            if (image != null)
+                UnityEngine.Object.Destroy(image);
+
+            var bgTransform = header.Find("HeaderBg");
+            RectTransform bgRect;
+            if (bgTransform == null)
+            {
+                var bgGo = new GameObject("HeaderBg", typeof(RectTransform));
+                bgGo.transform.SetParent(header, false);
+                bgGo.transform.SetAsFirstSibling();
+                bgRect = bgGo.GetComponent<RectTransform>();
+            }
+            else
+            {
+                bgRect = bgTransform as RectTransform;
+            }
+
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.offsetMin = Vector2.zero;
+            bgRect.offsetMax = Vector2.zero;
+
+            var bgImage = bgRect.GetComponent<Image>();
+            if (bgImage == null)
+                bgImage = bgRect.gameObject.AddComponent<Image>();
+            bgImage.raycastTarget = false;
+            bgImage.preserveAspect = false;
+            bgImage.pixelsPerUnitMultiplier = BaUiLayout.FramePixelsPerUnit;
+
+            if (_headerBg != null && _headerBg != _panelBg && IsUsableHeaderSprite(_headerBg))
+            {
+                ApplySliced(bgImage, _headerBg, HeaderFallbackTint);
+                bgImage.pixelsPerUnitMultiplier = BaUiLayout.FramePixelsPerUnit;
+                return;
+            }
+
+            bgImage.sprite = SolidSprite();
+            bgImage.type = Image.Type.Simple;
+            bgImage.color = HeaderFallbackTint;
+        }
+
+        private static bool IsUsableHeaderSprite(Sprite sprite) =>
+            sprite != null && sprite.rect.width >= 8f && sprite.rect.height >= 8f;
 
         public static void ApplyButtonBlue(Image image)
         {
@@ -143,34 +215,33 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
 
         public static void ApplyPinIcon(Image image)
         {
-            if (_pinIcon != null)
-            {
-                image.sprite = _pinIcon;
-                image.color = White;
-                image.preserveAspect = true;
-                image.type = Image.Type.Simple;
-            }
-            else
-            {
-                image.sprite = null;
-                image.color = White;
-            }
+            EnsureInitialized();
+            image.sprite = ResolvePinOverlaySprite();
+            image.color = White;
+            image.preserveAspect = true;
+            image.type = Image.Type.Simple;
+        }
+
+        /// <summary>Matches overlay icon material to a vanilla-styled button graphic.</summary>
+        public static void ConfigureOverlayIcon(Image overlay, Image referenceGraphic)
+        {
+            if (overlay == null)
+                return;
+
+            if (referenceGraphic != null && referenceGraphic.material != null)
+                overlay.material = referenceGraphic.material;
+
+            overlay.maskable = true;
+            overlay.raycastTarget = false;
         }
 
         public static void ApplyAddIcon(Image image)
         {
-            if (_addIcon != null)
-            {
-                image.sprite = _addIcon;
-                image.color = White;
-                image.preserveAspect = true;
-                image.type = Image.Type.Simple;
-            }
-            else
-            {
-                image.sprite = null;
-                image.color = White;
-            }
+            EnsureInitialized();
+            image.sprite = ResolveAddOverlaySprite();
+            image.color = White;
+            image.preserveAspect = true;
+            image.type = Image.Type.Simple;
         }
 
         public static void ApplyCarIcon(Image image)
@@ -202,6 +273,21 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             {
                 image.sprite = null;
                 image.color = White;
+            }
+        }
+
+        public static void ApplySearchIcon(Image image)
+        {
+            if (_searchIcon != null)
+            {
+                image.sprite = _searchIcon;
+                image.color = White;
+                image.preserveAspect = true;
+                image.type = Image.Type.Simple;
+            }
+            else
+            {
+                ApplyFocusIcon(image);
             }
         }
 
@@ -284,21 +370,15 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         public static bool TryApplyPinOverlayIcon(Image image)
         {
             ApplyPinIcon(image);
-            if (image.sprite != null)
-            {
-                image.enabled = true;
-                return true;
-            }
+            image.enabled = image.sprite != null;
+            return image.enabled;
+        }
 
-            ApplyFocusIcon(image);
-            if (image.sprite != null)
-            {
-                image.enabled = true;
-                return true;
-            }
-
-            image.enabled = false;
-            return false;
+        public static bool TryApplyAddOverlayIcon(Image image)
+        {
+            ApplyAddIcon(image);
+            image.enabled = image.sprite != null;
+            return image.enabled;
         }
 
         public static bool TryGetCarIcon(out Sprite sprite)
@@ -403,11 +483,128 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             }
             else
             {
+                // Unity Image renders nothing without a sprite — use a 1×1 white quad tinted to fallback.
+                image.sprite = SolidSprite();
+                image.type = Image.Type.Simple;
                 image.color = fallbackTint;
             }
 
             image.pixelsPerUnitMultiplier = 1f;
             image.preserveAspect = false;
+        }
+
+        private static Sprite SolidSprite()
+        {
+            if (_solidSprite != null)
+                return _solidSprite;
+
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            tex.SetPixel(0, 0, Color.white);
+            tex.Apply();
+            _solidSprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 100f);
+            return _solidSprite;
+        }
+
+        private static Sprite ResolvePinOverlaySprite()
+        {
+            if (_pinIcon != null && LooksLikeIconSprite(_pinIcon))
+                return _pinIcon;
+
+            return EmbeddedPinOverlaySprite();
+        }
+
+        private static Sprite ResolveAddOverlaySprite()
+        {
+            if (_addIcon != null && LooksLikeIconSprite(_addIcon))
+                return _addIcon;
+
+            return EmbeddedAddOverlaySprite();
+        }
+
+        private static Sprite EmbeddedPinOverlaySprite()
+        {
+            if (_embeddedPinOverlaySprite != null)
+                return _embeddedPinOverlaySprite;
+
+            const int size = 32;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var clear = new Color(0f, 0f, 0f, 0f);
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                    tex.SetPixel(x, y, clear);
+            }
+
+            var headCenterX = 16f;
+            var headCenterY = 21f;
+            const float headRadius = 7.5f;
+            const float headRadiusSq = headRadius * headRadius;
+
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var dx = x - headCenterX;
+                    var dy = y - headCenterY;
+                    if (dx * dx + dy * dy <= headRadiusSq)
+                    {
+                        tex.SetPixel(x, y, Color.white);
+                        continue;
+                    }
+
+                    // Tapered pin stem ending at the bottom tip.
+                    var tipY = 3f;
+                    var stemTopY = 14f;
+                    if (y >= tipY && y <= stemTopY)
+                    {
+                        var t = (y - tipY) / (stemTopY - tipY);
+                        var halfWidth = Mathf.Lerp(1.2f, 4.8f, t);
+                        if (Mathf.Abs(x - headCenterX) <= halfWidth)
+                            tex.SetPixel(x, y, Color.white);
+                    }
+                }
+            }
+
+            tex.Apply();
+            _embeddedPinOverlaySprite = Sprite.Create(
+                tex,
+                new Rect(0, 0, size, size),
+                new Vector2(0.5f, 0.08f),
+                100f);
+            return _embeddedPinOverlaySprite;
+        }
+
+        private static Sprite EmbeddedAddOverlaySprite()
+        {
+            if (_embeddedAddOverlaySprite != null)
+                return _embeddedAddOverlaySprite;
+
+            const int size = 32;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var clear = new Color(0f, 0f, 0f, 0f);
+            const int center = 16;
+            const int halfThickness = 3;
+            const int halfLength = 9;
+
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var inVertical = Mathf.Abs(x - center) <= halfThickness &&
+                                     Mathf.Abs(y - center) <= halfLength;
+                    var inHorizontal = Mathf.Abs(y - center) <= halfThickness &&
+                                       Mathf.Abs(x - center) <= halfLength;
+                    tex.SetPixel(x, y, inVertical || inHorizontal ? Color.white : clear);
+                }
+            }
+
+            tex.Apply();
+            _embeddedAddOverlaySprite = Sprite.Create(
+                tex,
+                new Rect(0, 0, size, size),
+                new Vector2(0.5f, 0.5f),
+                100f);
+            return _embeddedAddOverlaySprite;
         }
 
         private static void Discover()
@@ -458,15 +655,43 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                 // polices pas encore prêtes
             }
 
+            ResolvePreferredSearchIcon();
             ResolvePreferredFocusIcon();
             ResolvePreferredPinIcon();
             ResolvePreferredAddIcon();
             ResolvePreferredCarIcon();
             ResolvePreferredHistoryIcon();
+            ResolvePreferredHeaderBg();
+        }
+
+        private static void ResolvePreferredHeaderBg()
+        {
+            if (_headerBg != null)
+                return;
+
+            if (TryFindSpriteExact(new[]
+                {
+                    HeaderBgName,
+                    "darkgreybox-header",
+                    "darkgreybox_header@2x"
+                }, out _headerBg))
+                return;
+
+            TryFindSpriteNameContains("darkgreybox-header", out _headerBg);
+            if (_headerBg != null)
+                return;
+
+            TryFindSpriteNameContains("darkgreybox", out _headerBg, "bordered", "round");
         }
 
         private static void ResolvePreferredPinIcon()
         {
+            if (TryGetVanillaDestinationPoiIcon(out var vanilla))
+            {
+                _pinIcon = vanilla;
+                return;
+            }
+
             if (TryFindSpriteExact(new[]
                 {
                     "icon-pin",
@@ -476,24 +701,128 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                     "icon-location",
                     "icon-locate",
                     "icon-marker"
-                }, out var sprite))
+                }, out var sprite) && LooksLikeIconSprite(sprite))
             {
                 _pinIcon = sprite;
                 return;
             }
 
-            if (TryFindSpriteNameContains("pin", out sprite, "spin", "shop", "cart", "shipping")
-                || TryFindSpriteNameContains("location", out sprite)
-                || TryFindSpriteNameContains("marker", out sprite))
-            {
+            if (TryFindSpriteTrustedPinName(out sprite) && LooksLikeIconSprite(sprite))
                 _pinIcon = sprite;
+        }
+
+        private static bool TryGetVanillaDestinationPoiIcon(out Sprite sprite)
+        {
+            sprite = null;
+            try
+            {
+                if (!InstanceBehavior<GuidersManager>.IsInitialized)
+                    return false;
+
+                var guider = InstanceBehavior<GuidersManager>.Instance?.destinationGuider;
+                sprite = guider?.poiICon;
+                return LooksLikeIconSprite(sprite);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryFindSpriteTrustedPinName(out Sprite sprite)
+        {
+            sprite = null;
+            try
+            {
+                var sprites = Resources.FindObjectsOfTypeAll<Sprite>();
+                for (var i = 0; i < sprites.Length; i++)
+                {
+                    var candidate = sprites[i];
+                    if (candidate == null || !LooksLikeIconSprite(candidate))
+                        continue;
+
+                    if (IsPinIconName(candidate.name))
+                    {
+                        sprite = candidate;
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return false;
+        }
+
+        private static bool LooksLikeIconSprite(Sprite sprite)
+        {
+            if (sprite == null)
+                return false;
+
+            try
+            {
+                var rect = sprite.rect;
+                if (rect.width < 8f || rect.height < 8f)
+                    return false;
+
+                // Reject atlas/root sprites that render as colored squares in small overlays.
+                if (rect.width > 256f || rect.height > 256f)
+                    return false;
+
+                return sprite.texture != null;
+            }
+            catch
+            {
+                return false;
             }
         }
 
         private static void ResolvePreferredAddIcon()
         {
-            if (TryFindSpriteExact(new[] { "icon-add", "icon-plus", "plus", "add" }, out var sprite))
+            if (TryFindSpriteExact(new[]
+                {
+                    "icon-add",
+                    "icon-plus",
+                    "icon-new",
+                    "plus",
+                    "add"
+                }, out var sprite) && LooksLikeIconSprite(sprite))
+            {
                 _addIcon = sprite;
+                return;
+            }
+
+            if (TryFindSpriteTrustedAddName(out sprite) && LooksLikeIconSprite(sprite))
+                _addIcon = sprite;
+        }
+
+        private static bool TryFindSpriteTrustedAddName(out Sprite sprite)
+        {
+            sprite = null;
+            try
+            {
+                var sprites = Resources.FindObjectsOfTypeAll<Sprite>();
+                for (var i = 0; i < sprites.Length; i++)
+                {
+                    var candidate = sprites[i];
+                    if (candidate == null || !LooksLikeIconSprite(candidate))
+                        continue;
+
+                    if (IsAddIconName(candidate.name))
+                    {
+                        sprite = candidate;
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return false;
         }
 
         private static void ResolvePreferredCarIcon()
@@ -609,6 +938,21 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                    || name.IndexOf("shopping", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
+        private static void ResolvePreferredSearchIcon()
+        {
+            if (TryFindSpriteExact(new[]
+                {
+                    "icon-search",
+                    "icon-zoom",
+                    "icon-magnify",
+                    "icon-find",
+                    "icon-magnifying-glass"
+                }, out _searchIcon))
+                return;
+
+            TryFindSpriteNameContains("search", out _searchIcon, "research");
+        }
+
         private static void ResolvePreferredFocusIcon()
         {
             try
@@ -661,10 +1005,10 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             if (_settingsIcon == null && IsSettingsIconName(s.name))
                 _settingsIcon = s;
 
-            if (_pinIcon == null && IsPinIconName(s.name))
+            if (_pinIcon == null && IsPinIconName(s.name) && LooksLikeIconSprite(s))
                 _pinIcon = s;
 
-            if (_addIcon == null && IsAddIconName(s.name))
+            if (_addIcon == null && IsAddIconName(s.name) && LooksLikeIconSprite(s))
                 _addIcon = s;
 
             if (_carIcon == null && IsCarIconName(s.name))
@@ -672,6 +1016,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
 
             if (_focusIcon == null && IsFocusIconName(s.name))
                 _focusIcon = s;
+
+            if (_searchIcon == null && IsSearchIconName(s.name))
+                _searchIcon = s;
 
             if (_historyIcon == null && IsHistoryIconName(s.name))
                 _historyIcon = s;
@@ -724,6 +1071,22 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                    || name.IndexOf("locate", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
+        private static bool IsSearchIconName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return false;
+
+            if (string.Equals(name, "icon-search", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "icon-zoom", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "icon-magnify", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "icon-find", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return name.IndexOf("magnif", StringComparison.OrdinalIgnoreCase) >= 0
+                   || (name.IndexOf("search", StringComparison.OrdinalIgnoreCase) >= 0
+                       && name.IndexOf("research", StringComparison.OrdinalIgnoreCase) < 0);
+        }
+
         private static bool IsCarIconName(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -741,11 +1104,23 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                 || string.Equals(name, "map-pin", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(name, "icon-pushpin", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(name, "pushpin", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(name, "icon-location", StringComparison.OrdinalIgnoreCase))
+                || string.Equals(name, "icon-location", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "icon-locate", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "icon-marker", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (name.IndexOf("spin", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (name.IndexOf("spin", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("shop", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("cart", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("shipping", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("mapping", StringComparison.OrdinalIgnoreCase) >= 0)
                 return false;
+
+            if (name.EndsWith("-pin", StringComparison.OrdinalIgnoreCase)
+                || name.EndsWith("_pin", StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("pin-", StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("pin_", StringComparison.OrdinalIgnoreCase))
+                return true;
 
             return name.IndexOf("pushpin", StringComparison.OrdinalIgnoreCase) >= 0
                    || name.IndexOf("map-pin", StringComparison.OrdinalIgnoreCase) >= 0;

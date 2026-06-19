@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using BAModAPI;
+using Capisoft.Lib.BaUnifiedUI.Assets;
 using Capisoft.Lib.BaUnifiedUI.BaXaml.Generated;
 using Capisoft.Lib.BaUnifiedUI.Core;
 using UnityEngine;
@@ -16,8 +17,9 @@ namespace Capisoft.Lib.BaUnifiedUI
         public Task OnLoadAsync(ModContext context)
         {
             BaUiBootstrap.EnsureEventSystem();
+            BaUiAssets.EnsureInitialized();
             GpsHudDocument.EnsureRegistered();
-            Debug.Log("[LIB_BaUnifiedUI] UI library " + BaUiVersion.Version + " loaded.");
+            Debug.Log("[LIB_BaUnifiedUI] UI library " + BaUiVersion.Version + " rev=" + BaUiVersion.LayoutRevision + " loaded | mod_root=" + context.ModRootPath);
             return Task.CompletedTask;
         }
 

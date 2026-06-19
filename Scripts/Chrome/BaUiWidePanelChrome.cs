@@ -94,7 +94,6 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         private static TMP_FontAsset _fontRegular;
         private static TMP_FontAsset _fontBold;
         private static TMP_FontAsset _fontMedium;
-        private static bool _discovered;
 
         public readonly struct HudPanelMetrics
         {
@@ -155,11 +154,18 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
                 SetLayerRecursive(transform.GetChild(i).gameObject, layer);
         }
 
-        /// <summary>Same chrome recipe as VoogleRoute RouteToggleHud / GameStylePanelChrome.</summary>
-        public static RectTransform BuildToggleHudPanel(Transform parent, out RectTransform header, out HudPanelMetrics metrics)
+        /// <summary>Same chrome recipe as VoogleRoute RouteActionPanel / GameStylePanelChrome.</summary>
+        public static RectTransform BuildToggleHudPanel(Transform parent, out RectTransform header, out HudPanelMetrics metrics) =>
+            BuildToggleHudPanel(parent, 1f, out header, out metrics);
+
+        public static RectTransform BuildToggleHudPanel(
+            Transform parent,
+            float scale,
+            out RectTransform header,
+            out HudPanelMetrics metrics)
         {
-            metrics = new HudPanelMetrics(1f);
-            return BuildHudPanel(parent, metrics.PanelWidth, metrics.PanelHeight, "ToggleHud", out header, useToggleHeader: true);
+            metrics = new HudPanelMetrics(scale);
+            return BuildHudPanel(parent, metrics.PanelWidth, metrics.PanelHeight, "NavPanel", out header, useToggleHeader: true);
         }
 
         public static RectTransform BuildPanel(Transform parent, float panelWidth, float panelHeight, string panelName, out RectTransform header) =>
@@ -193,9 +199,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
                 ApplyToggleHudHeaderFrame(header, panelWidth);
             else
                 ApplyMainPanelHeaderFrame(header, panelWidth);
-            var headerImage = header.gameObject.AddComponent<Image>();
-            headerImage.raycastTarget = false;
-            ApplyHeaderBg(headerImage);
+            BaUiAssets.BuildHeaderBackground(header, scale);
 
             return panel;
         }
@@ -562,31 +566,13 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
             }
         }
 
-        private static void ApplyHudButtonBlue(Image image)
-        {
-            ApplySliced(image, _btnBlue, new Color(0.25f, 0.58f, 0.82f, 1f), Color.white);
-            image.pixelsPerUnitMultiplier = HudButtonPixelsPerUnit;
-        }
+        private static void ApplyHudButtonBlue(Image image) => BaUiAssets.ApplyButtonBlue(image);
 
-        private static void ApplyHudButtonGrey(Image image)
-        {
-            ApplySliced(image, _btnGrey != null ? _btnGrey : _btnBlue, new Color(0.36f, 0.41f, 0.46f, 1f), Color.white);
-            image.pixelsPerUnitMultiplier = HudButtonPixelsPerUnit;
-        }
+        private static void ApplyHudButtonGrey(Image image) => BaUiAssets.ApplyButtonGrey(image);
 
-        private static void ApplyHudButtonGreen(Image image)
-        {
-            var vanillaContinueGreen = new Color(0.47f, 0.73f, 0.38f, 1f);
-            ApplySliced(image, _btnGreen != null ? _btnGreen : _btnGrey, vanillaContinueGreen, Color.white);
-            image.pixelsPerUnitMultiplier = HudButtonPixelsPerUnit;
-        }
+        private static void ApplyHudButtonGreen(Image image) => BaUiAssets.ApplyButtonGreen(image);
 
-        private static void ApplyHudButtonRed(Image image)
-        {
-            var vanillaRed = new Color(0.78f, 0.28f, 0.28f, 1f);
-            ApplySliced(image, _btnRed, vanillaRed, Color.white);
-            image.pixelsPerUnitMultiplier = HudButtonPixelsPerUnit;
-        }
+        private static void ApplyHudButtonRed(Image image) => BaUiAssets.ApplyButtonRed(image);
 
         public static void ApplyTitleStyle(TextMeshProUGUI text, float scale = 1f)
         {
@@ -627,17 +613,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         public static void ApplyHeaderFrame(RectTransform header, float scale) =>
             ApplyMainPanelHeaderFrame(header, RefPanelWidth * scale);
 
-        private static void ApplyPanelBg(Image image)
-        {
-            ApplySliced(image, _panelBg, new Color(0.2f, 0.24f, 0.3f, 1f), Color.white);
-            image.pixelsPerUnitMultiplier = FramePixelsPerUnit;
-        }
-
-        private static void ApplyHeaderBg(Image image)
-        {
-            ApplySliced(image, _headerBg, new Color(0.78f, 0.8f, 0.83f, 1f), Color.white);
-            image.pixelsPerUnitMultiplier = FramePixelsPerUnit;
-        }
+        private static void ApplyPanelBg(Image image) => BaUiAssets.ApplyPanelBg(image);
 
         private static void ApplySliced(Image image, Sprite sprite, Color fallbackTint, Color spriteTint)
         {
@@ -658,19 +634,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
             image.preserveAspect = false;
         }
 
-        private static void ApplyTitleFont(TextMeshProUGUI text)
-        {
-            var font = _fontRegular != null ? _fontRegular : _fontBold;
-            if (font != null)
-                text.font = font;
-        }
+        private static void ApplyTitleFont(TextMeshProUGUI text) => BaUiAssets.ApplyTitleFont(text);
 
-        private static void ApplyButtonFont(TextMeshProUGUI text)
-        {
-            var font = _fontMedium != null ? _fontMedium : _fontBold;
-            if (font != null)
-                text.font = font;
-        }
+        private static void ApplyButtonFont(TextMeshProUGUI text) => BaUiAssets.ApplyButtonFont(text);
 
         private static RectTransform CreateRect(Transform parent, string name)
         {

@@ -2,6 +2,7 @@ using System;
 using Capisoft.Lib.BaUnifiedUI.Assets;
 using Capisoft.Lib.BaUnifiedUI.Chrome;
 using Capisoft.Lib.BaUnifiedUI.Controls;
+using Capisoft.Lib.BaUnifiedUI.Core;
 using Capisoft.Lib.BaUnifiedUI.Layout;
 using TMPro;
 using UnityEngine;
@@ -25,6 +26,28 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
             public static Color Body => BaUiAssets.BodyTextColor;
             public static Color Muted => BaUiAssets.MutedBodyTextColor;
             public static Color CarPoiBackground => BaUiAssets.CarPoiBackgroundColor;
+
+            public static Color BizManLightTitle => BaUiAssets.BizManLightTitleColor;
+            public static Color BizManLightBody => BaUiAssets.BizManLightBodyTextColor;
+            public static Color BizManLightMuted => BaUiAssets.BizManLightMutedTextColor;
+        }
+
+        public static class BizManLight
+        {
+            public const float TitleFontSize = BaUiBizManLightLayout.TitleFontSize;
+            public const float BodyFontSize = BaUiBizManLightLayout.BodyFontSize;
+            public const float LabelFontSize = BaUiBizManLightLayout.LabelFontSize;
+            public const float ControlFontSize = BaUiBizManLightLayout.ControlFontSize;
+            public const float FooterButtonHeight = BaUiBizManLightLayout.FooterButtonHeight;
+            public const float FooterBottomInset = BaUiBizManLightLayout.FooterBottomInset;
+            public const float FooterButtonGap = BaUiBizManLightLayout.FooterButtonGap;
+            public const float RowHeight = BaUiBizManLightLayout.RowHeight;
+            public const float RowGap = BaUiBizManLightLayout.RowGap;
+            public const float LabelColumnWidth = BaUiBizManLightLayout.LabelColumnWidth;
+            public const float DimmerAlpha = BaUiBizManLightLayout.DimmerAlpha;
+
+            public static float ResolvePanelWidth() => BaUiBizManLightLayout.ResolvePanelWidth();
+            public static float ResolvePanelHeight() => BaUiBizManLightLayout.ResolvePanelHeight();
         }
 
         public static class Layout
@@ -56,6 +79,25 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
             public static float ComputeWideMapPanelHeaderWidenTrim(float panelWidth) =>
                 BaUiLayout.ComputeWideMapPanelHeaderWidenTrim(panelWidth);
 
+            [System.Obsolete("Use ComputeWideMapPanelHeaderWidenTrim for layout-wide panels only.")]
+            public static float ComputeDockedHeaderExtraTrim(float panelWidth) =>
+                BaUiLayout.ComputeDockedHeaderExtraTrim(panelWidth);
+
+            public const float ListRowHeight = BaUiListMetrics.RowHeight;
+            public const float ListRowGap = BaUiListMetrics.RowGap;
+
+            public static float ScrollViewportHeight(int visibleRowCount) =>
+                BaUiListMetrics.ScrollViewportHeight(visibleRowCount);
+
+            public static float ContentPanelHeight(Action<BaPanelContentBuilder> compose) =>
+                BaPanelContentBuilder.ComputePanelHeight(compose);
+
+            public const float SettingsPanelScale = BaUiSettingsMetrics.DefaultPanelScale;
+            public const float SettingsPanelHeight = BaUiSettingsMetrics.DefaultPanelHeight;
+
+            public static float SettingsPanelWidth(float scale = BaUiSettingsMetrics.DefaultPanelScale) =>
+                BaUiLayout.PanelWidth * scale;
+
             public static float ComputeHeaderIconsTitleReserve(int iconCount, float scale) =>
                 BaUiLayout.ComputeHeaderIconsTitleReserve(iconCount, scale);
 
@@ -77,11 +119,24 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
 
         public static void EnsureReady() => BaUiAssets.EnsureInitialized();
 
+        public static string LibraryVersion => BaUiVersion.Version;
+
+        public static int LayoutRevision => BaUiVersion.LayoutRevision;
+
         public static bool ShouldRebuildHud => BaUiAssets.ShouldRebuildHud;
+
+        /// <summary>Alias — chrome rebuild covers headers on all BaUi panels, not only the action panel.</summary>
+        public static bool ShouldRebuildChrome => BaUiAssets.ShouldRebuildHud;
 
         public static void MarkRebuildHandled() => BaUiAssets.MarkRebuildHandled();
 
         public static void ApplyLayer(GameObject root) => BaUiChrome.ApplyUiLayer(root);
+
+        public static void BringToPopupLayer(Transform target, GameObject root) =>
+            BaUiWindowStack.BringToPopupLayer(target, root);
+
+        public static void ReleasePopupLayer(GameObject root) =>
+            BaUiWindowStack.ReleasePopupLayer(root);
 
         public static void ApplyPanelBg(Image image) => BaUiAssets.ApplyPanelBg(image);
 

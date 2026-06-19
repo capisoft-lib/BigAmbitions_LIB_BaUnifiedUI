@@ -130,9 +130,104 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
             rect.pivot = new Vector2(1f, 0.5f);
             rect.sizeDelta = new Vector2(size, size);
             rect.anchoredPosition = new Vector2(-rightInset, BaUiLayout.SettingsIconOffsetY * scale);
+            return PopulateHeaderIconButton(rect, scale, applyStyle, tryApplyIcon, onClick, fallbackGlyph);
+        }
 
+        /// <summary>Right-aligned strip — icons stack via <see cref="HorizontalLayoutGroup"/> (first added = rightmost).</summary>
+        public static RectTransform CreateHeaderIconStrip(Transform header, float scale)
+        {
+            var strip = BaUiWidgets.CreateRect(header, "HeaderIcons");
+            strip.anchorMin = new Vector2(1f, 0f);
+            strip.anchorMax = new Vector2(1f, 1f);
+            strip.pivot = new Vector2(1f, 0.5f);
+            strip.anchoredPosition = new Vector2(0f, BaUiLayout.SettingsIconOffsetY * scale);
+            strip.sizeDelta = Vector2.zero;
+
+            var pad = Mathf.RoundToInt(BaUiLayout.HeaderIconButtonPad * scale);
+            var hlg = strip.gameObject.AddComponent<HorizontalLayoutGroup>();
+            hlg.padding = new RectOffset(pad, pad, 0, 0);
+            hlg.spacing = BaUiLayout.HeaderIconButtonGap * scale;
+            hlg.childAlignment = TextAnchor.MiddleRight;
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = false;
+            hlg.childForceExpandHeight = false;
+            hlg.reverseArrangement = true;
+
+            var fitter = strip.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+            return strip;
+        }
+
+        public static Button CreateHeaderIconInStrip(
+            Transform iconStrip,
+            float scale,
+            Action<Image> applyStyle,
+            Func<Image, bool> tryApplyIcon,
+            UnityAction onClick,
+            string name = null,
+            string fallbackGlyph = null)
+        {
+            var go = new GameObject(string.IsNullOrEmpty(name) ? "HeaderIcon" : name, typeof(RectTransform));
+            go.transform.SetParent(iconStrip, false);
+            var rect = go.GetComponent<RectTransform>();
+            var size = BaUiLayout.HeaderIconButtonSize * scale;
+            var layout = go.AddComponent<LayoutElement>();
+            layout.preferredWidth = layout.preferredHeight = size;
+            layout.minWidth = layout.minHeight = size;
+            return PopulateHeaderIconButton(rect, scale, applyStyle, tryApplyIcon, onClick, fallbackGlyph);
+        }
+
+        /// <summary>Action panel buttons anchored from the panel top-center (legacy RouteToggleHud layout).</summary>
+        public static Button CreatePanelTopActionButton(
+            RectTransform panel,
+            string name,
+            Vector2 topAnchoredPos,
+            float width,
+            float height,
+            float scale,
+            BaButtonStyle style,
+            UnityAction onClick,
+            out Image graphic,
+            out TextMeshProUGUI label)
+        {
+            var rect = BaUiWidgets.CreateRect(panel, name);
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 1f);
+            rect.pivot = new Vector2(0.5f, 1f);
+            rect.anchoredPosition = topAnchoredPos;
+            rect.sizeDelta = new Vector2(width, height);
+
+            graphic = BaUiWidgets.CreateButtonGraphic(rect, scale, style);
+            var button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = graphic;
+            BaUiAssets.BindButtonClick(button, onClick);
+
+            var labelGo = BaUiWidgets.CreateRect(rect, "Label");
+            BaUiWidgets.Stretch(labelGo);
+            labelGo.offsetMin = new Vector2(BaUiLayout.ButtonTextPaddingX * scale, 0f);
+            labelGo.offsetMax = new Vector2(-BaUiLayout.ButtonTextPaddingX * scale,
+                -BaUiLayout.ButtonLabelBottomInset * scale);
+            label = labelGo.gameObject.AddComponent<TextMeshProUGUI>();
+            label.fontSize = BaUiLayout.ButtonFontSize * scale;
+            label.fontStyle = FontStyles.Bold | FontStyles.UpperCase;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = Color.white;
+            label.raycastTarget = false;
+            BaUiAssets.ApplyButtonFont(label);
+            return button;
+        }
+
+        private static Button PopulateHeaderIconButton(
+            RectTransform rect,
+            float scale,
+            Action<Image> applyStyle,
+            Func<Image, bool> tryApplyIcon,
+            UnityAction onClick,
+            string fallbackGlyph)
+        {
             var graphic = BaUiAssets.CreateButtonGraphic(rect, scale, applyStyle, 1f, bleedBottom: false);
-            var button = go.AddComponent<Button>();
+            var button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = graphic;
             BaUiAssets.BindButtonClick(button, onClick);
 

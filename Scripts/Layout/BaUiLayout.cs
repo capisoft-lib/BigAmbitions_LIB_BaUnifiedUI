@@ -28,8 +28,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
         public const float FrameOffsetY = -13f;
         public const float FramePixelsPerUnit = 2.45f;
 
-        public const float HeaderTrimWidthBase = 10f;
-        public const float HeaderTrimOffsetXBase = 0f;
+        /// <summary>Hud-trim header — calibrated in-game (legacy NavPanelLayout / GameStylePanelChrome).</summary>
+        public const float HeaderTrimWidthBase = 11f;
+        public const float HeaderTrimOffsetXBase = -0.5f;
         public const float HeaderLeftExtend = 2f;
         public const float BodyVisibleLeft = 26f;
         public const float BodyVisibleRight = 373f;
@@ -47,23 +48,30 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
         /// <summary>Ajustement vertical icône engrenage (px ref panel 370, négatif = vers le bas).</summary>
         public const float SettingsIconOffsetY = 1f;
 
-        public const float HeaderIconButtonSize = 30f;
+        public const float HeaderIconButtonSize = 32f;
         public const float HeaderIconButtonPad = 8f;
         public const float HeaderIconButtonGap = 4f;
         /// <summary>Inset inside header icon buttons so glyphs/sprites read smaller than the hit target.</summary>
         public const float HeaderIconInnerPad = 7f;
-        /// <summary>Extra header width per side on 420px map panels (screen px).</summary>
-        public const float WideMapPanelHeaderWidenPerSide = 2f;
+        /// <summary>Extra header width per side when panel is wider than <see cref="PanelWidth"/> (screen px).</summary>
+        public const float DockedHeaderWidenPerSide = 2f;
 
-        /// <summary>Negative extraTrim widens header while keeping hud-trim centering.</summary>
+        /// <summary>
+        /// Negative extraTrim widens the hud-trim header on layout-wide panels (e.g. 420px map).
+        /// Do not apply to uniform scale-ups of the 370px action panel — trim already scales with width.
+        /// </summary>
         public static float ComputeWideMapPanelHeaderWidenTrim(float panelWidth)
         {
             if (panelWidth <= PanelWidth)
                 return 0f;
 
             var scale = panelWidth / PanelWidth;
-            return -(WideMapPanelHeaderWidenPerSide * 2f) / scale;
+            return -(DockedHeaderWidenPerSide * 2f) / scale;
         }
+
+        [System.Obsolete("Use ComputeWideMapPanelHeaderWidenTrim for layout-wide panels only.")]
+        public static float ComputeDockedHeaderExtraTrim(float panelWidth) =>
+            ComputeWideMapPanelHeaderWidenTrim(panelWidth);
 
         /// <summary>Distance from header right edge to icon pivot (0 = rightmost).</summary>
         public static float ComputeHeaderIconRightInset(int slotFromRight, float scale)
@@ -114,6 +122,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
             out float sizeDeltaX,
             out float anchoredPositionX)
         {
+            _ = panelWidth;
             var trimW = (HeaderTrimWidthBase - HeaderLeftExtend + extraTrimWidth) * scale;
             if (trimW <= 0f)
             {
@@ -193,4 +202,3 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
         }
     }
 }
-
