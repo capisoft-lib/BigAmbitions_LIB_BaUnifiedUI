@@ -40,6 +40,13 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
         public const float ToggleHudHeaderRightAdjust = 1f;
         public const float MainPanelHeaderTightenLeft = 3f;
         public const float MainPanelHeaderTightenRight = 5f;
+        /// <summary>
+        /// Fixed visual inset difference between the panel and header 9-slice sprites.
+        /// Beyond the calibrated 740px main-panel width, the panel bleed grows while
+        /// these sprite-space insets remain constant.
+        /// </summary>
+        public const float MainPanelHeaderSpriteInsetLeft = 17f;
+        public const float MainPanelHeaderSpriteInsetRight = 16f;
         public const float SettingsHeaderTightenPerSide = 2f;
         /// <summary>Élargit le header settings pour supprimer le gap latéral (px ref panel 370, négatif = plus large).</summary>
         public static float SettingsPanelHeaderWidenTrim => -(HeaderTrimWidthBase - HeaderLeftExtend);
@@ -67,6 +74,33 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
 
             var scale = panelWidth / PanelWidth;
             return -(DockedHeaderWidenPerSide * 2f) / scale;
+        }
+
+        /// <summary>
+        /// Computes header extensions whose visible edges stay flush with the visible
+        /// panel frame. The legacy minimum preserves the already-calibrated geometry
+        /// through the standard 740px main panel; larger panels follow the scaled body
+        /// bleed while keeping the two sprites' fixed visual inset difference.
+        /// </summary>
+        public static void ComputeMainPanelHeaderExtensions(
+            float panelWidth,
+            out float leftExtend,
+            out float rightExtend)
+        {
+            var scale = Mathf.Max(0.01f, panelWidth / PanelWidth);
+            var legacyLeft =
+                FrameBleedWidth * 0.5f - FrameOffsetX - MainPanelHeaderTightenLeft;
+            var legacyRight =
+                FrameBleedWidth * 0.5f + FrameOffsetX - MainPanelHeaderTightenRight;
+            var bodyAlignedLeft =
+                (FrameBleedWidth * 0.5f - FrameOffsetX) * scale -
+                MainPanelHeaderSpriteInsetLeft;
+            var bodyAlignedRight =
+                (FrameBleedWidth * 0.5f + FrameOffsetX) * scale -
+                MainPanelHeaderSpriteInsetRight;
+
+            leftExtend = Mathf.Max(legacyLeft, bodyAlignedLeft);
+            rightExtend = Mathf.Max(legacyRight, bodyAlignedRight);
         }
 
         [System.Obsolete("Use ComputeWideMapPanelHeaderWidenTrim for layout-wide panels only.")]

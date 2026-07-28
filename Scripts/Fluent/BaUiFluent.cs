@@ -219,18 +219,31 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
 
                 ApplyDock(chrome.Panel);
 
-                _header?.Invoke(new BaHeaderBuilder(chrome.Header, chrome.Scale));
+                // MainPanel keeps the vanilla 48px header height even when its body is
+                // much wider than the 370px action-panel reference. Scaling header
+                // controls from panel width would turn a 1220px panel into a 3.3x title
+                // and close button while the header itself remains 48px tall.
+                var headerControlScale = _recipe == BaPanelRecipe.MainPanel
+                    ? 1f
+                    : chrome.Scale;
+                _header?.Invoke(new BaHeaderBuilder(chrome.Header, headerControlScale));
                 if (body != null)
                     _body?.Invoke(new BaBodyBuilder(body, chrome.Scale, chrome.Metrics));
                 else if (_content != null)
                     _content.Invoke(new BaPanelContentBuilder(chrome.Panel, chrome.Scale, chrome.ContentInset));
 
-                BaUiChrome.FinalizeDockedHeader(
-                    chrome.Panel,
-                    chrome.Header,
-                    _panelWidth,
-                    _recipe == BaPanelRecipe.ActionPanel || _recipe == BaPanelRecipe.WideMapPanel,
-                    _headerExtraTrim);
+                // BizManLight owns its flat, light header image. Running the generic
+                // finalizer here replaces it with the sliced dark HUD header and uses
+                // the 370px HUD scale for a ~1180px BizMan panel.
+                if (_recipe != BaPanelRecipe.BizManLight)
+                {
+                    BaUiChrome.FinalizeDockedHeader(
+                        chrome.Panel,
+                        chrome.Header,
+                        _panelWidth,
+                        _recipe == BaPanelRecipe.ActionPanel || _recipe == BaPanelRecipe.WideMapPanel,
+                        _headerExtraTrim);
+                }
 
                 if (NeedsPostLayoutChromeRestore(_recipe))
                 {

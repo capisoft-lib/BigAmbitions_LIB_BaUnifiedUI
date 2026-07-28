@@ -376,14 +376,14 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         }
 
         /// <summary>
-        /// Header edges aligned to the visible frame. Bleed uses ref-pixel constants (not panel-width scale)
-        /// so a 2×-wide panel does not over-stretch the title bar past the body frame.
+        /// Header edges aligned to the visible body frame at every supported main-panel width.
         /// </summary>
         public static void ApplyMainPanelHeaderFrame(RectTransform header, float panelWidth)
         {
-            _ = panelWidth;
-            var leftExtend = FrameBleedWidth * 0.5f - FrameOffsetX - MainPanelHeaderTightenLeft;
-            var rightExtend = FrameBleedWidth * 0.5f + FrameOffsetX - MainPanelHeaderTightenRight;
+            BaUiLayout.ComputeMainPanelHeaderExtensions(
+                panelWidth,
+                out var leftExtend,
+                out var rightExtend);
 
             header.anchorMin = new Vector2(0f, 1f);
             header.anchorMax = new Vector2(1f, 1f);

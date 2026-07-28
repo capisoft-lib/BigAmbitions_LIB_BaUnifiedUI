@@ -286,13 +286,12 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
 
             EnsureHeaderOnPanel(header);
 
-            var leftExtend = BaUiLayout.FrameBleedWidth * 0.5f - BaUiLayout.FrameOffsetX -
-
-                             BaUiLayout.MainPanelHeaderTightenLeft;
-
-            var rightExtend = BaUiLayout.FrameBleedWidth * 0.5f + BaUiLayout.FrameOffsetX -
-
-                              BaUiLayout.MainPanelHeaderTightenRight;
+            var panel = header.parent as RectTransform;
+            var panelWidth = panel != null ? panel.rect.width : BaUiLayout.PanelWidth;
+            BaUiLayout.ComputeMainPanelHeaderExtensions(
+                panelWidth,
+                out var leftExtend,
+                out var rightExtend);
 
 
 
