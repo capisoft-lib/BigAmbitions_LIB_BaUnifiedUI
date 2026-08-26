@@ -1,5 +1,7 @@
 using Capisoft.Lib.BaUnifiedUI.Assets;
 
+using Capisoft.Lib.BaUnifiedUI.Core;
+
 using Capisoft.Lib.BaUnifiedUI.Layout;
 
 using Helpers;
@@ -71,6 +73,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
                 group.blocksRaycasts = false;
 
             }
+
+            BaUiOptionsVisibilityGuard.Attach(root);
 
 
 

@@ -98,9 +98,11 @@ namespace Capisoft.Lib.BaUnifiedUI.Localization
                 {
                     types = asm.GetTypes();
                 }
-                catch (ReflectionTypeLoadException ex)
+                catch (ReflectionTypeLoadException)
                 {
-                    types = ex.Types ?? Array.Empty<Type>();
+                    // The Big Ambitions Mono profile does not expose the partial
+                    // Types collection. Skip assemblies that cannot be scanned.
+                    continue;
                 }
 
                 foreach (var type in types)

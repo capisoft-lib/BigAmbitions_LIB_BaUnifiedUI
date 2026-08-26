@@ -1,0 +1,1 @@
+Shared vanilla-style UI library for Big Ambitions mods: panels, controls, draggable windows and configurable shortcuts. Required by compatible capisoft-lib mods.

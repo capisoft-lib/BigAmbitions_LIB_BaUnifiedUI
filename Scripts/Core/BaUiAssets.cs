@@ -29,6 +29,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         public static readonly Color TitleColor = new Color(0.15f, 0.17f, 0.22f, 1f);
         public static readonly Color BodyTextColor = new Color(0.92f, 0.94f, 0.96f, 1f);
         public static readonly Color MutedBodyTextColor = new Color(0.75f, 0.78f, 0.82f, 1f);
+        public static readonly Color KeybindFieldTextColor = new Color(0.13f, 0.15f, 0.18f, 1f);
         public static readonly Color CarPoiBackgroundColor = new Color(0.25f, 0.58f, 0.82f, 1f);
 
         public static readonly Color BizManLightPanelBg = Color.white;
@@ -45,6 +46,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         private static Sprite _solidSprite;
         private static Sprite _embeddedPinOverlaySprite;
         private static Sprite _embeddedAddOverlaySprite;
+        private static Sprite _embeddedKeybindFieldSprite;
+        private static Sprite _embeddedResetIconSprite;
         private static Sprite _panelBg;
         private static Sprite _headerBg;
         private static Sprite _iconBg;
@@ -59,6 +62,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         private static Sprite _focusIcon;
         private static Sprite _searchIcon;
         private static Sprite _historyIcon;
+        private static Sprite _resetIcon;
         private static TMP_FontAsset _fontRegular;
         private static TMP_FontAsset _fontBold;
         private static TMP_FontAsset _fontMedium;
@@ -181,6 +185,31 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             var vanillaRed = new Color(0.78f, 0.28f, 0.28f, 1f);
             ApplySliced(image, _btnRed != null ? _btnRed : _btnGrey, vanillaRed);
             image.pixelsPerUnitMultiplier = BaUiLayout.ButtonPixelsPerUnit;
+        }
+
+        /// <summary>Light key field matching the vanilla Controls binding rows.</summary>
+        public static void ApplyKeybindField(Image image)
+        {
+            ApplySliced(
+                image,
+                EmbeddedKeybindFieldSprite(),
+                new Color(0.96f, 0.97f, 0.98f, 1f),
+                new Color(0.96f, 0.97f, 0.98f, 1f));
+            image.pixelsPerUnitMultiplier = BaUiLayout.ButtonPixelsPerUnit;
+        }
+
+        /// <summary>Vanilla-style counter-clockwise reset overlay.</summary>
+        public static void ApplyResetIcon(Image image)
+        {
+            EnsureInitialized();
+            if (_resetIcon == null)
+                ResolvePreferredResetIcon();
+
+            image.sprite = _resetIcon != null ? _resetIcon : EmbeddedResetIconSprite();
+            image.color = White;
+            image.preserveAspect = true;
+            image.type = Image.Type.Simple;
+            image.raycastTarget = false;
         }
 
         public static void ApplyTitleFont(TextMeshProUGUI text)
@@ -607,6 +636,91 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             return _embeddedAddOverlaySprite;
         }
 
+        private static Sprite EmbeddedKeybindFieldSprite()
+        {
+            if (_embeddedKeybindFieldSprite != null)
+                return _embeddedKeybindFieldSprite;
+
+            const int size = 32;
+            const float radius = 5f;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = "BAUI Keybind Field",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            var clear = new Color(0f, 0f, 0f, 0f);
+            var half = size * 0.5f;
+            var straightHalf = half - radius;
+            var radiusSq = radius * radius;
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var dx = Mathf.Max(Mathf.Abs(x + 0.5f - half) - straightHalf, 0f);
+                    var dy = Mathf.Max(Mathf.Abs(y + 0.5f - half) - straightHalf, 0f);
+                    texture.SetPixel(x, y, dx * dx + dy * dy <= radiusSq ? Color.white : clear);
+                }
+            }
+
+            texture.Apply();
+            _embeddedKeybindFieldSprite = Sprite.Create(
+                texture,
+                new Rect(0, 0, size, size),
+                new Vector2(0.5f, 0.5f),
+                100f,
+                0,
+                SpriteMeshType.FullRect,
+                new Vector4(radius, radius, radius, radius));
+            _embeddedKeybindFieldSprite.name = "BAUI Keybind Field";
+            return _embeddedKeybindFieldSprite;
+        }
+
+        private static Sprite EmbeddedResetIconSprite()
+        {
+            if (_embeddedResetIconSprite != null)
+                return _embeddedResetIconSprite;
+
+            const int size = 32;
+            const float center = 16f;
+            const float radius = 9f;
+            const float halfStroke = 1.6f;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = "BAUI Reset Icon",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            var clear = new Color(0f, 0f, 0f, 0f);
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var dx = x + 0.5f - center;
+                    var dy = y + 0.5f - center;
+                    var distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    var angle = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
+                    if (angle < 0f)
+                        angle += 360f;
+
+                    var onArc = Mathf.Abs(distance - radius) <= halfStroke
+                                && (angle >= 116f || angle <= 76f);
+                    var arrowHead = x >= 5 && x <= 13 && y >= 19 && y <= 27
+                                    && (x + y <= 33 || y - x >= 14);
+                    texture.SetPixel(x, y, onArc || arrowHead ? Color.white : clear);
+                }
+            }
+
+            texture.Apply();
+            _embeddedResetIconSprite = Sprite.Create(
+                texture,
+                new Rect(0, 0, size, size),
+                new Vector2(0.5f, 0.5f),
+                100f);
+            _embeddedResetIconSprite.name = "BAUI Reset Icon";
+            return _embeddedResetIconSprite;
+        }
+
         private static void Discover()
         {
             try
@@ -661,6 +775,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             ResolvePreferredAddIcon();
             ResolvePreferredCarIcon();
             ResolvePreferredHistoryIcon();
+            ResolvePreferredResetIcon();
             ResolvePreferredHeaderBg();
         }
 
@@ -1022,6 +1137,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
 
             if (_historyIcon == null && IsHistoryIconName(s.name))
                 _historyIcon = s;
+
+            if (_resetIcon == null && IsResetIconName(s.name) && LooksLikeIconSprite(s))
+                _resetIcon = s;
         }
 
         private static void ResolvePreferredHistoryIcon()
@@ -1041,6 +1159,35 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             TryFindSpriteNameContains("history", out _historyIcon, "story");
         }
 
+        private static void ResolvePreferredResetIcon()
+        {
+            if (_resetIcon != null)
+                return;
+
+            if (TryFindSpriteExact(new[]
+                {
+                    "icon-reset",
+                    "icon-undo",
+                    "icon-reload",
+                    "icon-refresh",
+                    "reset",
+                    "undo"
+                }, out var sprite) && LooksLikeIconSprite(sprite))
+            {
+                _resetIcon = sprite;
+                return;
+            }
+
+            if (TryFindSpriteNameContains("reset", out sprite) && LooksLikeIconSprite(sprite))
+            {
+                _resetIcon = sprite;
+                return;
+            }
+
+            if (TryFindSpriteNameContains("undo", out sprite) && LooksLikeIconSprite(sprite))
+                _resetIcon = sprite;
+        }
+
         private static bool IsHistoryIconName(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -1055,6 +1202,19 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             return name.IndexOf("history", StringComparison.OrdinalIgnoreCase) >= 0
                    || (name.IndexOf("clock", StringComparison.OrdinalIgnoreCase) >= 0
                        && name.IndexOf("alarm", StringComparison.OrdinalIgnoreCase) < 0);
+        }
+
+        private static bool IsResetIconName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return false;
+
+            return string.Equals(name, "icon-reset", StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(name, "icon-undo", StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(name, "icon-reload", StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(name, "icon-refresh", StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(name, "reset", StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(name, "undo", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsFocusIconName(string name)

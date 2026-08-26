@@ -1,0 +1,4 @@
+- First standalone Workshop-ready release of LIB BA Unified UI
+- Stable shared assembly identity for safe automatic updates
+- Draggable windows, Options visibility handling, reusable vanilla-style controls and configurable shortcut fields
+- Consumer mods now depend on this separate library instead of bundling private copies

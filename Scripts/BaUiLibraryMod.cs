@@ -3,6 +3,7 @@ using BAModAPI;
 using Capisoft.Lib.BaUnifiedUI.Assets;
 using Capisoft.Lib.BaUnifiedUI.BaXaml.Generated;
 using Capisoft.Lib.BaUnifiedUI.Core;
+using Capisoft.Lib.BaUnifiedUI.Shortcuts;
 using UnityEngine;
 
 [assembly: RegisterModClass(typeof(Capisoft.Lib.BaUnifiedUI.BaUiLibraryMod))]
@@ -18,6 +19,7 @@ namespace Capisoft.Lib.BaUnifiedUI
         {
             BaUiBootstrap.EnsureEventSystem();
             BaUiAssets.EnsureInitialized();
+            BaKeybindRegistry.Initialize();
             GpsHudDocument.EnsureRegistered();
             Debug.Log("[LIB_BaUnifiedUI] UI library " + BaUiVersion.Version + " rev=" + BaUiVersion.LayoutRevision + " loaded | mod_root=" + context.ModRootPath);
             return Task.CompletedTask;
@@ -25,6 +27,7 @@ namespace Capisoft.Lib.BaUnifiedUI
 
         public Task OnUnloadAsync()
         {
+            BaKeybindRegistry.Shutdown();
             Debug.Log("[LIB_BaUnifiedUI] UI library unloaded.");
             return Task.CompletedTask;
         }

@@ -1,0 +1,6 @@
+- First stable independent release of LIB BA Unified UI
+- One package supports Big Ambitions EA 0.11 and 1.0 experimental
+- Added reusable vanilla-style panels, controls, layouts and popups
+- Added native draggable-window handling with saved positions across both game APIs
+- Added Options-screen visibility handling and configurable shortcuts
+- Kept a stable public assembly identity for mod integrations

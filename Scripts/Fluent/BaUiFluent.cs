@@ -21,6 +21,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
         public float ContentInset { get; internal set; }
         public BaUiLayout.Metrics Metrics { get; internal set; }
         public float PanelHeight { get; internal set; }
+        public BaUiDragState Drag { get; internal set; }
     }
 
     public static partial class BaUi
@@ -54,6 +55,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
         private UnityAction _onDismiss;
         private bool _skipBody;
         private bool _interactive = true;
+        private string _draggableId;
         private Action<BaUiBuiltPanel> _afterPanelChildren;
 
         internal BaOverlayBuilder(string rootName, int sortOrder, bool modal, float dimmerAlpha = 0.55f)
@@ -115,6 +117,19 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
             return this;
         }
 
+        /// <summary>
+        /// Move the panel from its header using Big Ambitions' native window service.
+        /// The stable ID persists the position in the game's player settings.
+        /// </summary>
+        public BaOverlayBuilder Draggable(string persistentId)
+        {
+            if (string.IsNullOrWhiteSpace(persistentId))
+                throw new ArgumentException("A draggable BAUI panel requires a stable persistence ID.", nameof(persistentId));
+
+            _draggableId = persistentId.Trim();
+            return this;
+        }
+
         /// <summary>Panel children added after header/content and docked chrome are finalized (buttons stay above frame layers).</summary>
         public BaOverlayBuilder AfterPanelChildren(Action<BaUiBuiltPanel> configure)
         {
@@ -138,6 +153,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
 
         public BaUiBuiltPanel Build()
         {
+            if (_draggableId != null && !_interactive)
+                throw new InvalidOperationException("A non-interactive BAUI overlay cannot be draggable.");
+
             BaUiBootstrap.EnsureEventSystem();
             BaUiAssets.EnsureInitialized();
 
@@ -250,6 +268,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
                     Canvas.ForceUpdateCanvases();
                     BaUiChrome.RestorePanelChrome(chrome.Panel, _panelWidth, _headerExtraTrim);
                 }
+
+                if (_draggableId != null)
+                    built.Drag = BaUiDraggableWindow.Attach(chrome.Panel, chrome.Header, _draggableId);
 
                 _afterPanelChildren?.Invoke(built);
 

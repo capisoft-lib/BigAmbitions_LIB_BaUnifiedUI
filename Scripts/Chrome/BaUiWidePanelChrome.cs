@@ -135,6 +135,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
             var group = root.AddComponent<CanvasGroup>();
             group.interactable = interactive;
             group.blocksRaycasts = interactive;
+            BaUiOptionsVisibilityGuard.Attach(root);
         }
 
         /// <summary>Match vanilla UI layer so GameManager.HasInputSelected blocks hotkeys while typing.</summary>
