@@ -6,10 +6,17 @@ LIB BA Unified UI does not add gameplay by itself. It provides a stable collecti
 
 The same 1.0.0 package supports Big Ambitions EA 0.11 and 1.0 experimental.
 
+[b]New in this update: native color picker[/b]
+
+Mods can now add a persistent color setting directly under Options > Mods. The component uses Big Ambitions' native HSV picker, shows a live color swatch and hexadecimal value, supports Reset All, and notifies the mod once when the player closes the picker with a changed color.
+
 [b]Included UI services[/b]
 
 [list]
+[*]Native persisted color options under Options > Mods using the game's HSV picker
+[*]Live color swatches, hexadecimal values and runtime change handles
 [*]Vanilla-style panels, headers, buttons, lists, search fields and popups
+[*]Reusable scroll lists with visible rails and draggable thumbs
 [*]Reusable fluent layout builders with automatic panel sizing
 [*]Draggable windows with native cursor behavior and saved positions
 [*]Compatibility with the draggable-window APIs from EA 0.11 and 1.0 experimental

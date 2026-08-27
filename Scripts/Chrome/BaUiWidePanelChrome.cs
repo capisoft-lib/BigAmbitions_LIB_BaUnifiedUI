@@ -85,16 +85,6 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         public const float FooterStatusVerticalNudge = 6f;
         public const float HeaderCloseButtonOffsetY = 1f;
 
-        private static Sprite _panelBg;
-        private static Sprite _headerBg;
-        private static Sprite _btnGreen;
-        private static Sprite _btnBlue;
-        private static Sprite _btnGrey;
-        private static Sprite _btnRed;
-        private static TMP_FontAsset _fontRegular;
-        private static TMP_FontAsset _fontBold;
-        private static TMP_FontAsset _fontMedium;
-
         public readonly struct HudPanelMetrics
         {
             public readonly float Scale;
@@ -119,6 +109,27 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         }
 
         public static void EnsureInitialized() => BaUiAssets.EnsureInitialized();
+
+        /// <summary>
+        /// Makes a runtime-built panel movable from its header through Big Ambitions'
+        /// native draggable-window service. The stable ID persists the position.
+        /// </summary>
+        public static BaUiDragState AttachDraggableWindow(
+            RectTransform panel,
+            RectTransform header,
+            string persistentId)
+        {
+            if (panel == null)
+                throw new ArgumentNullException(nameof(panel));
+            if (header == null)
+                throw new ArgumentNullException(nameof(header));
+            if (string.IsNullOrWhiteSpace(persistentId))
+                throw new ArgumentException(
+                    "A draggable BAUI panel requires a stable persistence ID.",
+                    nameof(persistentId));
+
+            return BaUiDraggableWindow.Attach(panel, header, persistentId.Trim());
+        }
 
         public static void SetupOverlayCanvas(GameObject root, int sortingOrder, bool interactive)
         {
@@ -616,25 +627,6 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
 
         private static void ApplyPanelBg(Image image) => BaUiAssets.ApplyPanelBg(image);
 
-        private static void ApplySliced(Image image, Sprite sprite, Color fallbackTint, Color spriteTint)
-        {
-            if (sprite != null)
-            {
-                image.sprite = sprite;
-                image.color = spriteTint;
-                var border = sprite.border;
-                image.type = border.x > 0.01f || border.y > 0.01f || border.z > 0.01f || border.w > 0.01f
-                    ? Image.Type.Sliced
-                    : Image.Type.Simple;
-            }
-            else
-            {
-                image.color = fallbackTint;
-            }
-
-            image.preserveAspect = false;
-        }
-
         private static void ApplyTitleFont(TextMeshProUGUI text) => BaUiAssets.ApplyTitleFont(text);
 
         private static void ApplyButtonFont(TextMeshProUGUI text) => BaUiAssets.ApplyButtonFont(text);
@@ -646,64 +638,6 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
             return go.GetComponent<RectTransform>();
         }
 
-        private static void DiscoverAssets()
-        {
-            try
-            {
-                foreach (var sprite in Resources.FindObjectsOfTypeAll<Sprite>())
-                {
-                    CaptureSprite(sprite);
-                    if (HasAllAssets())
-                        return;
-                }
-            }
-            catch
-            {
-                // ignore
-            }
-
-            try
-            {
-                foreach (var font in Resources.FindObjectsOfTypeAll<TMP_FontAsset>())
-                {
-                    if (font == null)
-                        continue;
-
-                    if (font.name == "Rubik-Regular SDF" && _fontRegular == null)
-                        _fontRegular = font;
-                    else if (font.name == "Rubik-Bold SDF" && _fontBold == null)
-                        _fontBold = font;
-                    else if (font.name == "Rubik-Medium SDF" && _fontMedium == null)
-                        _fontMedium = font;
-                }
-            }
-            catch
-            {
-                // ignore
-            }
-        }
-
-        private static bool HasAllAssets() =>
-            _panelBg != null && _headerBg != null && (_fontRegular != null || _fontBold != null);
-
-        private static void CaptureSprite(Sprite sprite)
-        {
-            if (sprite == null)
-                return;
-
-            if (sprite.name == "grey-round-bordered" && _panelBg == null)
-                _panelBg = sprite;
-            if (sprite.name == "darkgreybox-header@2x" && _headerBg == null)
-                _headerBg = sprite;
-            if (sprite.name == "Gradient-Green-Round" && _btnGreen == null)
-                _btnGreen = sprite;
-            if (sprite.name == "Gradient-Blue-Round" && _btnBlue == null)
-                _btnBlue = sprite;
-            if (sprite.name == "Gradient-Gray-Border-Round" && _btnGrey == null)
-                _btnGrey = sprite;
-            if (sprite.name == "Gradient-Red-Round" && _btnRed == null)
-                _btnRed = sprite;
-        }
     }
 }
 

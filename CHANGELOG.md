@@ -2,6 +2,23 @@
 
 ## [1.0.0] - 2026-08-26
 
+### Added
+
+- Native `Options > Mods` color picker option with swatch/hex preview, per-mod
+  persistence, Reset All support, and a runtime color handle
+- Reusable scroll lists now keep a visible vertical rail; its draggable thumb
+  shrinks when content exceeds the viewport
+
+### Fixed
+
+- Exact-name panel cleanup now snapshots active scene objects before destroying each match
+  once, avoiding delayed-destroy lookup loops
+- Custom color and shortcut options no longer notify consumers or rewrite values
+  when an Options rebuild leaves the effective value unchanged
+- Color-picker persistence and its consumer callback are committed once on close
+  instead of once per HSV cursor movement
+- Removed obsolete wide-panel sprite/font discovery and its unused caches
+
 ### Release
 
 - First public standalone Steam Workshop release

@@ -1,1 +1,1 @@
-Independent shared UI library for Big Ambitions mods: vanilla-style panels, controls, draggable windows, layouts and configurable shortcuts.
+Shared UI library for Big Ambitions mods, now with native persistent color pickers in Options > Mods, plus scroll lists, draggable windows and shortcuts.

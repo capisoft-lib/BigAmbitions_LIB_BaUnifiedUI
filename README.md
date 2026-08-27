@@ -25,7 +25,7 @@ This library does not add gameplay by itself. Install it when another mod lists 
 
 Consumer mods must not bundle their own copy of this DLL. A single enabled Workshop installation supplies the shared assembly.
 
-Version 1.0.0 adapts its native draggable-window integration to both supported game APIs, so the same library package is used by EA 0.11 and 1.0 experimental consumers.
+The current 1.0.0 Workshop build includes a native game color-picker option and visible scroll rails while retaining the cross-version draggable-window integration used by EA 0.11 and 1.0 experimental consumers.
 
 ## Namespace
 
@@ -90,6 +90,9 @@ if (panel.Drag.HasSavedPosition || panel.Drag.IsDragging)
 }
 ```
 
+Panels built manually with `BaUiWidePanelChrome.BuildPanel` can attach the same
+native behavior through `BaUiWidePanelChrome.AttachDraggableWindow`.
+
 ## Vanilla Options visibility
 
 Every BAUI canvas is automatically hidden and made non-interactive while the
@@ -133,6 +136,40 @@ Conflict discovery covers the game's current player and vehicle Input System
 assets plus participating BAUILib options. A mod that polls raw keyboard state
 without registering through BAUILib cannot be discovered; `Unbound` is therefore
 the only universally conflict-free value.
+
+## Color picker in Options > Mods
+
+`AddColorPicker` (also available as `AddColor`) adds a native-style row with a
+live swatch, hexadecimal value, and reset button. Clicking the field opens Big
+Ambitions' own HSV color picker. The selected `Color` is stored as `#RRGGBBAA`
+under `m:{modId}:{optionId}`, so the game's **Reset All** action restores the
+declared default.
+
+```csharp
+using BigAmbitions.Mods;
+using Capisoft.Lib.BaUnifiedUI.Options;
+using UnityEngine;
+
+private BaColorPickerHandle _routeColor;
+
+var options = new ModOptions()
+    .AddColorPicker(
+        "route_color",
+        "my_mod_option_route_color",
+        new Color(0.1f, 0.75f, 1f, 1f),
+        out _routeColor,
+        color => ApplyRouteColor(color));
+
+OptionsService.Register(context.ModId, options);
+
+// Available anywhere after registration:
+ApplyRouteColor(_routeColor.Color);
+```
+
+Picker movements update the handle's `ColorChanged` event and the row preview
+live. Persistence and the option's `onValueChanged` callback occur once when the
+picker closes with a different final color. Native Cancel restores the opening
+color without writing or notifying the consumer callback.
 
 ## Chrome (all docked panels)
 

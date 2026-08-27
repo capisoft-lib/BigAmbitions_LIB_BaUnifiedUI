@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Capisoft.Lib.BaUnifiedUI.Fluent;
 using UnityEngine;
 
@@ -90,13 +91,36 @@ namespace Capisoft.Lib.BaUnifiedUI.Core
             if (exactNames == null || exactNames.Length == 0)
                 return;
 
+            var names = new HashSet<string>(StringComparer.Ordinal);
             for (var i = 0; i < exactNames.Length; i++)
             {
                 var name = exactNames[i];
-                GameObject go;
-                while ((go = GameObject.Find(name)) != null)
-                    UnityEngine.Object.Destroy(go);
+                if (!string.IsNullOrEmpty(name))
+                    names.Add(name);
             }
+
+            if (names.Count == 0)
+                return;
+
+            var matches = new List<GameObject>();
+            var sceneObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            for (var i = 0; i < sceneObjects.Length; i++)
+            {
+                var go = sceneObjects[i];
+                if (go == null
+                    || !go.activeInHierarchy
+                    || !go.scene.IsValid()
+                    || !go.scene.isLoaded
+                    || !names.Contains(go.name))
+                {
+                    continue;
+                }
+
+                matches.Add(go);
+            }
+
+            for (var i = 0; i < matches.Count; i++)
+                UnityEngine.Object.Destroy(matches[i]);
         }
     }
 }

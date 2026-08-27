@@ -128,8 +128,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Shortcuts
                 _hasLoaded = false;
             }
 
-            LoadFromPreferences(force: true);
-            _option.NotifyValueChanged(_binding);
+            if (LoadFromPreferences(force: true))
+                _option.NotifyValueChanged(_binding);
         }
 
         private void EnsureLoaded()
@@ -148,13 +148,13 @@ namespace Capisoft.Lib.BaUnifiedUI.Shortcuts
                 LoadFromPreferences(force: false);
         }
 
-        private void LoadFromPreferences(bool force)
+        private bool LoadFromPreferences(bool force)
         {
             var modId = ModId;
             if (string.IsNullOrEmpty(modId))
-                return;
+                return false;
             if (!force && _hasLoaded && string.Equals(_loadedModId, modId, StringComparison.Ordinal))
-                return;
+                return false;
 
             var previous = _binding;
             var loaded = _option.DefaultBinding;
@@ -173,16 +173,22 @@ namespace Capisoft.Lib.BaUnifiedUI.Shortcuts
             _binding = loaded;
             _loadedModId = modId;
             _hasLoaded = true;
-            if (previous != loaded)
+            var changed = previous != loaded;
+            if (changed)
             {
                 RaiseBindingChanged(loaded);
                 BaKeybindRegistry.NotifyBindingChanged();
             }
+
+            return changed;
         }
 
         private void SetBinding(BaKeybind binding, bool persist, bool notifyOption)
         {
             var changed = _binding != binding;
+            if (!changed)
+                return;
+
             _binding = binding;
             _loadedModId = ModId;
             _hasLoaded = true;
@@ -190,11 +196,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Shortcuts
             if (persist)
                 UnityEngine.PlayerPrefs.SetString(BuildPrefsKey(ModId, OptionId), binding.Serialize());
 
-            if (changed)
-            {
-                RaiseBindingChanged(binding);
-                BaKeybindRegistry.NotifyBindingChanged();
-            }
+            RaiseBindingChanged(binding);
+            BaKeybindRegistry.NotifyBindingChanged();
 
             if (notifyOption)
                 _option.NotifyValueChanged(binding);
