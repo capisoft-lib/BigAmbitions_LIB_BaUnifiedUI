@@ -10,13 +10,13 @@
 
 ### Changed
 
-- Layout revision 30 lets consumer panels rebuild with the corrected shared
+- Layout revision 31 lets consumer panels rebuild with the corrected shared
   close-button geometry
 
 ### Fixed
 
-- Header close buttons now keep equal visible margins from the top and right
-  edges in both direct and fluent panel builders
+- Header close buttons preserve the original 8-unit top inset and now reuse
+  that exact inset on the right in both direct and fluent panel builders
 
 ## [1.0.0] - 2026-08-26
 
