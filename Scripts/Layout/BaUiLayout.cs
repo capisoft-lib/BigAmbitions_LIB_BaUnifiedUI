@@ -84,9 +84,9 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
 
         /// <summary>
         /// Computes header extensions whose visible edges stay flush with the visible
-        /// panel frame. The legacy minimum preserves the already-calibrated geometry
-        /// through the standard 740px main panel; larger panels follow the scaled body
-        /// bleed while keeping the two sprites' fixed visual inset difference.
+        /// panel frame. Compact main panels follow the scaled body bleed directly;
+        /// applying the 740px legacy minimum to them makes the header overhang. The
+        /// standard 740px panel and larger panels preserve their calibrated geometry.
         /// </summary>
         public static void ComputeMainPanelHeaderExtensions(
             float panelWidth,
@@ -104,6 +104,13 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
             var bodyAlignedRight =
                 (FrameBleedWidth * 0.5f + FrameOffsetX) * scale -
                 MainPanelHeaderSpriteInsetRight;
+
+            if (panelWidth < PanelWidth * 2f)
+            {
+                leftExtend = bodyAlignedLeft;
+                rightExtend = bodyAlignedRight;
+                return;
+            }
 
             leftExtend = Mathf.Max(legacyLeft, bodyAlignedLeft);
             rightExtend = Mathf.Max(legacyRight, bodyAlignedRight);
