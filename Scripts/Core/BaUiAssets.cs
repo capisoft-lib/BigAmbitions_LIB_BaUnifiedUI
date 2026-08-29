@@ -337,7 +337,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
         }
 
         public const float HeaderCloseButtonSize = 30f;
-        public const float HeaderCloseButtonOffsetX = -5f;
+        public const float HeaderCloseButtonOffsetX = -17f;
         public const float HeaderCloseButtonOffsetY = 1f;
 
         public static float ComputeHeaderCloseTitleReserve(float scale, float extraOffsetX = 0f)

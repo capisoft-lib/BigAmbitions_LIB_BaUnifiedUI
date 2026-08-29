@@ -81,7 +81,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         public static readonly Color ButtonGreenFallback = new Color(0.28f, 0.72f, 0.38f, 1f);
         public static readonly Color ButtonRedFallback = new Color(0.82f, 0.22f, 0.22f, 1f);
         public const float HeaderCloseButtonSize = 30f;
-        public const float HeaderCloseButtonOffsetX = -5f;
+        public const float HeaderCloseButtonOffsetX = -17f;
         public const float FooterStatusVerticalNudge = 6f;
         public const float HeaderCloseButtonOffsetY = 1f;
 

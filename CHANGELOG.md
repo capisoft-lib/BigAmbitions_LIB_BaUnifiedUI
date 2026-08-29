@@ -10,7 +10,11 @@
 
 ### Changed
 
-- Layout revision 28 lets consumer panels rebuild for the new settings controls
+- Layout revision 29 lets consumer panels rebuild for the new settings controls
+
+### Fixed
+
+- Header close buttons now keep a visible inset from the panel's right edge
 
 ## [1.0.0] - 2026-08-26
 
