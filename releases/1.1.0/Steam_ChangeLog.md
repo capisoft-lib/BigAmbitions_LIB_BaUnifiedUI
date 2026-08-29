@@ -1,0 +1,4 @@
+- Added toggle and slider rows cloned from Big Ambitions' native Options prefabs
+- Native game sprites, fonts, spacing, transitions and control geometry are preserved
+- Consumer mods keep ownership of persistence and immediate-apply callbacks
+- Bumped the public library version to 1.1.0 and layout revision to 28

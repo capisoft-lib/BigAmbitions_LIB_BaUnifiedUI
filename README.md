@@ -8,7 +8,7 @@ Repository: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI
 
 | Property | Value |
 |---|---|
-| **Version** | `1.0.0` |
+| **Version** | `1.1.0` |
 | **Game** | Big Ambitions **EA 0.11** and **1.0 experimental** |
 | **Mod ID** | `LIB_BaUnifiedUI` |
 | **Assembly** | `LIB_BaUnifiedUI` (stable across updates) |
@@ -25,7 +25,7 @@ This library does not add gameplay by itself. Install it when another mod lists 
 
 Consumer mods must not bundle their own copy of this DLL. A single enabled Workshop installation supplies the shared assembly.
 
-The current 1.0.0 Workshop build includes a native game color-picker option and visible scroll rails while retaining the cross-version draggable-window integration used by EA 0.11 and 1.0 experimental consumers.
+Version 1.1.0 adds settings rows cloned directly from the game's own Options prefabs, alongside the native color picker, visible scroll rails, and cross-version draggable-window integration.
 
 ## Namespace
 
@@ -98,6 +98,35 @@ native behavior through `BaUiWidePanelChrome.AttachDraggableWindow`.
 Every BAUI canvas is automatically hidden and made non-interactive while the
 game's Options screen is visible. The library does not change the root's active
 state, so the consumer window returns exactly as it was when Options closes.
+
+## Native settings rows
+
+`BaUiVanillaSettings` clones Big Ambitions' own `Options > Mods` toggle and
+slider prefabs. The game therefore supplies the real sprites, spacing,
+transitions, fonts, pill toggles, slider tracks, and circular handles; the
+consumer supplies only its current value, display text, and callback.
+
+```csharp
+using Capisoft.Lib.BaUnifiedUI.Controls;
+
+BaUiVanillaSettings.CreateToggle(
+    content,
+    "Enable deliveries",
+    deliveriesEnabled,
+    value => SetDeliveriesEnabled(value));
+
+BaUiVanillaSettings.CreateSlider(
+    content,
+    "Delivery capacity",
+    1,
+    100,
+    capacity,
+    value => value + " items",
+    value => SetCapacity(value));
+```
+
+These controls deliberately do not write PlayerPrefs. This keeps persistence
+and immediate-apply behavior under the consumer mod's ownership.
 
 ## Keyboard shortcuts in Options > Mods
 

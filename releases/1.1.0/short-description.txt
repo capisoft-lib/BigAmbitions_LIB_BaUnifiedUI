@@ -1,0 +1,1 @@
+Shared UI library for Big Ambitions mods, now with controls cloned from the game's native Options prefabs, plus color pickers, draggable windows and shortcuts.
