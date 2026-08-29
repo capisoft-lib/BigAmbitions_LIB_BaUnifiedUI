@@ -8,7 +8,7 @@ Repository: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI
 
 | Property | Value |
 |---|---|
-| **Version** | `1.1.0` |
+| **Version** | `1.0.1` |
 | **Game** | Big Ambitions **EA 0.11** and **1.0 experimental** |
 | **Mod ID** | `LIB_BaUnifiedUI` |
 | **Assembly** | `LIB_BaUnifiedUI` (stable across updates) |
@@ -25,7 +25,7 @@ This library does not add gameplay by itself. Install it when another mod lists 
 
 Consumer mods must not bundle their own copy of this DLL. A single enabled Workshop installation supplies the shared assembly.
 
-Version 1.1.0 adds settings rows cloned directly from the game's own Options prefabs, alongside the native color picker, visible scroll rails, and cross-version draggable-window integration.
+Version 1.0.1 adds settings rows cloned directly from the game's own Options prefabs, alongside the native color picker, visible scroll rails, cross-version draggable-window integration, and corrected close-button spacing.
 
 ## Namespace
 

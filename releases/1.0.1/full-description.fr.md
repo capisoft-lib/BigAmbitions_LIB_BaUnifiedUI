@@ -1,4 +1,4 @@
-[b]LIB BA Unified UI 1.1.0[/b]
+[b]LIB BA Unified UI 1.0.1[/b]
 
 Bibliothèque indépendante d'interface utilisateur partagée pour le développement de mods Big Ambitions.
 
