@@ -9,6 +9,12 @@ namespace Capisoft.Lib.BaUnifiedUI.Layout
         public const float PanelWidth = 370f;
         public const float ContentInset = 18f;
         public const float HeaderHeight = 48f;
+        public const float HeaderCloseButtonSize = 30f;
+        public const float HeaderCloseButtonInset = 17f;
+        public const float HeaderCloseButtonOffsetX = -HeaderCloseButtonInset;
+        // The center-right anchor needs this vertical offset for top inset == right inset.
+        public const float HeaderCloseButtonOffsetY =
+            ((HeaderHeight - HeaderCloseButtonSize) * 0.5f) - HeaderCloseButtonInset;
         public const float HeaderTextPaddingX = 18f;
         public const float HeaderTextPaddingY = 7f;
         public const float BodyTopPadding = 5f;

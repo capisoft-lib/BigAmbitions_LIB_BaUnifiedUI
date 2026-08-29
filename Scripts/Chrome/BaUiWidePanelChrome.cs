@@ -80,10 +80,10 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
         public static readonly Color ButtonBlueBottom = new Color(0.2f, 0.38f, 0.78f, 1f);
         public static readonly Color ButtonGreenFallback = new Color(0.28f, 0.72f, 0.38f, 1f);
         public static readonly Color ButtonRedFallback = new Color(0.82f, 0.22f, 0.22f, 1f);
-        public const float HeaderCloseButtonSize = 30f;
-        public const float HeaderCloseButtonOffsetX = -17f;
+        public const float HeaderCloseButtonSize = BaUiLayout.HeaderCloseButtonSize;
+        public const float HeaderCloseButtonOffsetX = BaUiLayout.HeaderCloseButtonOffsetX;
         public const float FooterStatusVerticalNudge = 6f;
-        public const float HeaderCloseButtonOffsetY = 1f;
+        public const float HeaderCloseButtonOffsetY = BaUiLayout.HeaderCloseButtonOffsetY;
 
         public readonly struct HudPanelMetrics
         {
@@ -430,8 +430,11 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
             if (closeButton == null)
                 return;
 
-            closeButton.anchoredPosition = new Vector2(HeaderCloseButtonOffsetX * scale, HeaderCloseButtonOffsetY);
-            closeButton.sizeDelta = new Vector2(HeaderCloseButtonSize, HeaderCloseButtonSize);
+            closeButton.anchoredPosition = new Vector2(
+                HeaderCloseButtonOffsetX * scale,
+                HeaderCloseButtonOffsetY * scale);
+            var buttonSize = HeaderCloseButtonSize * scale;
+            closeButton.sizeDelta = new Vector2(buttonSize, buttonSize);
         }
 
         public static Button CreateCartChip(
