@@ -8,8 +8,8 @@ Repository: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI
 
 | Property | Value |
 |---|---|
-| **Version** | `1.0.1` |
-| **Game** | Big Ambitions **EA 0.11** and **1.0 experimental** |
+| **Version** | `1.0.3` |
+| **Game** | Big Ambitions **1.0** |
 | **Mod ID** | `LIB_BaUnifiedUI` |
 | **Assembly** | `LIB_BaUnifiedUI` (stable across updates) |
 | **Unity** | `2022.3.62f2` with the Big Ambitions Modding SDK |
@@ -25,7 +25,7 @@ This library does not add gameplay by itself. Install it when another mod lists 
 
 Consumer mods must not bundle their own copy of this DLL. A single enabled Workshop installation supplies the shared assembly.
 
-Version 1.0.1 adds settings rows cloned directly from the game's own Options prefabs, alongside the native color picker, visible scroll rails, cross-version draggable-window integration, and corrected close-button spacing.
+Version 1.0.3 makes dynamically created controls inherit their parent UI layer and hardens text-input focus transitions. This prevents gameplay hotkeys such as B and M from firing while a mod search field is active. Existing public integration APIs remain unchanged.
 
 ## Namespace
 
@@ -127,6 +127,12 @@ BaUiVanillaSettings.CreateSlider(
 
 These controls deliberately do not write PlayerPrefs. This keeps persistence
 and immediate-apply behavior under the consumer mod's ownership.
+
+Native rows are normalized from the game's 3840x2160 design units to BAUI's
+1920x1080 design units. Their labels, controls and row heights stay proportional
+to the containing panel regardless of screen resolution or vanilla UI zoom.
+If a consumer scales its canvas or panel, the complete hierarchy scales together;
+the rows do not apply a second, independent screen-size correction.
 
 ## Keyboard shortcuts in Options > Mods
 

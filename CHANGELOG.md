@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.0.3] - 2026-09-06
+
+### Fixed
+
+- Dynamically created widgets inherit their parent UI layer, including controls
+  added after a shared modal is first built.
+- Gameplay shortcuts remain suppressed while a BAUI text field is focused, so
+  typing B or M cannot open the phone or map.
+- Focus transitions no longer attempt a nested EventSystem selection while
+  Unity is already changing the selected control.
+
+### Compatibility
+
+- Existing public APIs and assembly identity are unchanged.
+- Layout revision 33 lets consumer panels detect the corrected UI-layer setup.
+
+## [1.0.2] - 2026-08-30
+
+### Fixed
+
+- Controls created through `BaUiWidgets` now inherit their parent's UI layer,
+  so game hotkeys remain suppressed when a late-created text field is focused.
+- Native toggle/slider rows now convert vanilla design units to BAUI design units
+  independently of live canvas scale. Their text and controls no longer grow
+  inside a fixed-size window when playing at 4K or using a different UI zoom.
+- Preserve text-input focus when another BAUI overlay releases gameplay input.
+
+### Compatibility
+
+- Existing HD row proportions, public APIs, canvas settings and panel/header
+  geometry are unchanged; consumer mods do not need to be rebuilt for this fix.
+- Layout revision 32 lets consumers detect the updated native-row layout.
+
 ## [1.0.1] - 2026-08-29
 
 ### Added
@@ -75,3 +108,5 @@
 [0.2.0]: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI/releases/tag/v0.2.0
 [1.0.0]: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI/releases/tag/v1.0.0
 [1.0.1]: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI/compare/v1.0.0...v1.0.1
+[1.0.3]: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI/compare/v1.0.2...v1.0.3
+[1.0.2]: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI/compare/v1.0.1...v1.0.2

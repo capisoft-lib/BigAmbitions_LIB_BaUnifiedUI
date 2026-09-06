@@ -1,0 +1,5 @@
+- Dynamically created widgets now inherit their parent UI layer
+- B, M and other gameplay shortcuts remain suppressed while typing in a BAUI text field
+- Focus transitions no longer perform nested EventSystem selection
+- Public assembly identity and integration APIs remain unchanged
+- Library version 1.0.3, layout revision 33

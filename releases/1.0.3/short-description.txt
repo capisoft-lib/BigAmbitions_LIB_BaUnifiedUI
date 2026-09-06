@@ -1,0 +1,1 @@
+Shared vanilla-style UI library for Big Ambitions mods. Version 1.0.3 protects focused text fields from gameplay hotkeys and fixes dynamic control layers.

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -19,6 +20,12 @@ namespace Capisoft.Lib.BaUnifiedUI.Core
 
             var selected = eventSystem.currentSelectedGameObject;
             if (selected == null || !IsUnderBaUiOverlay(selected))
+                return;
+
+            // Some BAUI consumers call this every frame to keep movement controls
+            // available while their passive HUD is visible. Never let one overlay
+            // steal keyboard focus from a text entry owned by another overlay.
+            if (selected.GetComponentInParent<TMP_InputField>() != null)
                 return;
 
             eventSystem.SetSelectedGameObject(null);

@@ -1,0 +1,1 @@
+Shared vanilla-style UI library for Big Ambitions mods. Version 1.0.2 fixes oversized native settings controls at 4K and preserves text-input focus between overlays.

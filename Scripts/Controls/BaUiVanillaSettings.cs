@@ -15,6 +15,11 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
     /// </summary>
     public static class BaUiVanillaSettings
     {
+        // Native Options rows use 3840x2160 design units; BAUI panels use
+        // 1920x1080 design units. Convert geometry, not current screen pixels.
+        // Reading Canvas.scaleFactor here makes only the rows grow at 4K or
+        // with UI zoom while their fixed-layout parent panel stays unchanged.
+        private const float NativeRowScale = 0.5f;
         private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly FieldInfo TogglePrefabField = RequireControllerField("modOptionsTogglePrefab");
         private static readonly FieldInfo SliderPrefabField = RequireControllerField("modOptionsSliderPrefab");
@@ -35,8 +40,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
             if (parent == null)
                 throw new ArgumentNullException(nameof(parent));
 
-            var prefab = FindPrefab(TogglePrefabField, parent, "toggle", out var visualScale);
-            var root = CreateNativeRow(parent, prefab, name, visualScale);
+            var prefab = FindPrefab(TogglePrefabField, "toggle");
+            var root = CreateNativeRow(parent, prefab, name);
 
             var control = root.GetComponent<ModOptionsToggleControl>()
                           ?? throw new InvalidOperationException("The native toggle prefab has no ModOptionsToggleControl.");
@@ -70,8 +75,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
             if (min > max)
                 throw new ArgumentOutOfRangeException(nameof(min), "Slider minimum cannot exceed maximum.");
 
-            var prefab = FindPrefab(SliderPrefabField, parent, "slider", out var visualScale);
-            var root = CreateNativeRow(parent, prefab, name, visualScale);
+            var prefab = FindPrefab(SliderPrefabField, "slider");
+            var root = CreateNativeRow(parent, prefab, name);
 
             var control = root.GetComponent<ModOptionsSliderControl>()
                           ?? throw new InvalidOperationException("The native slider prefab has no ModOptionsSliderControl.");
@@ -114,8 +119,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
         private static GameObject CreateNativeRow(
             Transform parent,
             GameObject prefab,
-            string name,
-            float visualScale)
+            string name)
         {
             var slot = new GameObject(name, typeof(RectTransform), typeof(LayoutElement));
             slot.transform.SetParent(parent, false);
@@ -133,29 +137,26 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
                 sourceHeight = 160f;
 
             var slotLayout = slot.GetComponent<LayoutElement>();
-            slotLayout.minHeight = sourceHeight * visualScale;
-            slotLayout.preferredHeight = sourceHeight * visualScale;
+            slotLayout.minHeight = sourceHeight * NativeRowScale;
+            slotLayout.preferredHeight = sourceHeight * NativeRowScale;
             slotLayout.flexibleHeight = 0f;
 
-            // The game's Options canvas is authored at 3840x2160 while BAUI
-            // overlays use 1920x1080. Stretch the native row by the inverse ratio,
-            // then scale it around the lower-left corner so it fills this slot at
-            // the same physical size it has in the vanilla Options screen.
+            // Keep the full slot width after converting the prefab's design
+            // units. The owning canvas may scale the entire window afterwards;
+            // resolution/UI zoom must not independently resize these children.
             rootRect.anchorMin = Vector2.zero;
-            rootRect.anchorMax = new Vector2(1f / visualScale, 1f / visualScale);
+            rootRect.anchorMax = new Vector2(1f / NativeRowScale, 1f / NativeRowScale);
             rootRect.pivot = Vector2.zero;
             rootRect.offsetMin = Vector2.zero;
             rootRect.offsetMax = Vector2.zero;
-            rootRect.localScale = new Vector3(visualScale, visualScale, 1f);
+            rootRect.localScale = new Vector3(NativeRowScale, NativeRowScale, 1f);
             root.SetActive(true);
             return root;
         }
 
         private static GameObject FindPrefab(
             FieldInfo prefabField,
-            Transform targetParent,
-            string controlName,
-            out float visualScale)
+            string controlName)
         {
             var controllers = Resources.FindObjectsOfTypeAll<ModOptionsViewController>();
             for (var i = 0; i < controllers.Length; i++)
@@ -166,25 +167,12 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
 
                 if (prefabField.GetValue(controller) is GameObject prefab && prefab != null)
                 {
-                    visualScale = ComputeCanvasScale(controller.transform, targetParent);
                     return prefab;
                 }
             }
 
-            visualScale = 1f;
             throw new InvalidOperationException(
                 "Big Ambitions' native " + controlName + " option prefab is not loaded yet.");
-        }
-
-        private static float ComputeCanvasScale(Transform source, Transform target)
-        {
-            var sourceCanvas = source.GetComponentInParent<Canvas>(includeInactive: true);
-            var targetCanvas = target.GetComponentInParent<Canvas>(includeInactive: true);
-            var sourceScale = sourceCanvas == null ? 0f : sourceCanvas.scaleFactor;
-            var targetScale = targetCanvas == null ? 0f : targetCanvas.scaleFactor;
-            if (sourceScale <= 0f || targetScale <= 0f)
-                return 0.5f;
-            return Mathf.Clamp(sourceScale / targetScale, 0.25f, 2f);
         }
 
         private static FieldInfo RequireControllerField(string name) =>

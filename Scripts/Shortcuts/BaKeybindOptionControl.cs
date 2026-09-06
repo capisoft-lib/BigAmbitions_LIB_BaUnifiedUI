@@ -150,6 +150,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Shortcuts
 
             foreach (var keyControl in keyboard.allKeys)
             {
+                if (keyControl == null)
+                    continue;
                 var key = keyControl.keyCode;
                 if (!keyControl.wasPressedThisFrame
                     || key == Key.None

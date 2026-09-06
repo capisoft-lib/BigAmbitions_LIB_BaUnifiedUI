@@ -1,0 +1,5 @@
+- Fixed oversized native settings labels and controls in fixed-size mod windows at 4K and with different UI zoom settings
+- Preserved the existing HD layout, shared headers, close buttons and canvas behavior
+- Kept text fields focused when another BAUI overlay releases gameplay input
+- Existing mod integrations remain compatible; consumer mods do not need a rebuild
+- Library version 1.0.2, layout revision 32

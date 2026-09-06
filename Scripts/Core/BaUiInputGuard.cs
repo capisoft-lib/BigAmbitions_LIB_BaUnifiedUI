@@ -20,7 +20,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Core
                 return;
 
             var eventSystem = EventSystem.current;
-            if (eventSystem == null)
+            if (eventSystem == null || eventSystem.alreadySelecting)
                 return;
 
             if (eventSystem.currentSelectedGameObject != _field.gameObject)

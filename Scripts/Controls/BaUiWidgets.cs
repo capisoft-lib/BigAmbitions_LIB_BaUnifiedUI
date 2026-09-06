@@ -18,6 +18,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
         {
             var go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
+            if (parent != null)
+                go.layer = parent.gameObject.layer;
             return go.GetComponent<RectTransform>();
         }
 
