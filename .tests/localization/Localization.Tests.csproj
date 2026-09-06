@@ -9,5 +9,3 @@
     <Compile Include="../../Scripts/Localization/BaUiText.cs" Link="BaUiText.cs" />
   </ItemGroup>
 </Project>
-
-
