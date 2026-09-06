@@ -1,0 +1,4 @@
+- Runtime overlay canvases and generated UI textures are marked not to save.
+- Leftover BAUI overlays are destroyed on city unload/reload, fixing the white square after loading a save.
+- Public APIs and assembly identity unchanged; layout revision remains 33.
+- Library version 1.0.5.

@@ -1,0 +1,1 @@
+Shared vanilla-style UI library for Big Ambitions mods. Version 1.0.5 keeps leftover overlay UI out of save/load so a white square no longer appears after reloading.

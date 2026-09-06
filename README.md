@@ -8,7 +8,7 @@ Repository: https://github.com/capisoft-lib/BigAmbitions_LIB_BaUnifiedUI
 
 | Property | Value |
 |---|---|
-| **Version** | `1.0.4` |
+| **Version** | `1.0.5` |
 | **Game** | Big Ambitions **1.0** |
 | **Mod ID** | `LIB_BaUnifiedUI` |
 | **Assembly** | `LIB_BaUnifiedUI` (stable across updates) |
@@ -25,7 +25,7 @@ This library does not add gameplay by itself. Install it when another mod lists 
 
 Consumer mods must not bundle their own copy of this DLL. A single enabled Workshop installation supplies the shared assembly.
 
-Version 1.0.4 fixes game localization lookup in BaUiText.Loc. Valid game keys now resolve through the actual Localizor API, while missing keys retain their fallback without emitting missing-translation warnings. Existing public integration APIs remain unchanged.
+Version 1.0.5 keeps runtime overlay canvases and generated UI textures out of savegames, and destroys leftover BAUI overlays on city unload/reload so a white square no longer appears after loading a save. Existing public integration APIs and layout revision 33 remain unchanged.
 
 ## Namespace
 

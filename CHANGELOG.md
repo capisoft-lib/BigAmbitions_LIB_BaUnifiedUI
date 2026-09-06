@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.5] - 2026-09-06
+
+### Fixed
+
+- Runtime overlay canvases and generated UI textures are marked `DontSave` so
+  they are not written into a savegame.
+- City unload/reload now destroys leftover BAUI overlay roots and resets the
+  sprite cache, which could otherwise appear as a white square after loading.
+
+### Compatibility
+
+- Existing public APIs, assembly identity and layout revision 33 are unchanged.
+
 ## [1.0.4] - 2026-09-06
 
 ### Fixed

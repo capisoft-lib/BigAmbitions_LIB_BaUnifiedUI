@@ -290,7 +290,6 @@ namespace Capisoft.Lib.BaUnifiedUI.Controls
         {
             BaUiAssets.EnsureInitialized();
             var root = new GameObject(name);
-            UnityEngine.Object.DontDestroyOnLoad(root);
             BaUiChrome.SetupOverlayCanvas(root, sortOrder);
 
             var panel = new GameObject("Panel", typeof(RectTransform));

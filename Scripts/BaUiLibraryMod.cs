@@ -17,6 +17,7 @@ namespace Capisoft.Lib.BaUnifiedUI
 
         public Task OnLoadAsync(ModContext context)
         {
+            BaUiRuntime.PurgeOverlayRoots();
             BaUiBootstrap.EnsureEventSystem();
             BaUiAssets.EnsureInitialized();
             BaKeybindRegistry.Initialize();
@@ -28,6 +29,9 @@ namespace Capisoft.Lib.BaUnifiedUI
         public Task OnUnloadAsync()
         {
             BaKeybindRegistry.Shutdown();
+            BaUiRuntime.PurgeOverlayRoots();
+            BaUiRuntime.DestroyEventSystem();
+            BaUiAssets.ResetRuntimeState();
             Debug.Log("[LIB_BaUnifiedUI] UI library unloaded.");
             return Task.CompletedTask;
         }

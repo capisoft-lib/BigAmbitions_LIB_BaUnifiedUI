@@ -133,6 +133,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
 
         public static void SetupOverlayCanvas(GameObject root, int sortingOrder, bool interactive)
         {
+            BaUiRuntime.MarkRoot(root);
             var canvas = root.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = sortingOrder;
@@ -156,6 +157,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
                 return;
 
             SetLayerRecursive(root, LayerHelper.UiLayerIndex);
+            BaUiRuntime.MarkHierarchy(root);
         }
 
         private static void SetLayerRecursive(GameObject go, int layer)

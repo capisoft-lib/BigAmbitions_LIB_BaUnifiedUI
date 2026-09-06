@@ -15,7 +15,7 @@ MonoBehaviour:
   ModId: LIB_BaUnifiedUI
   DisplayName: LIB BA Unified UI
   Author: capisoft-lib
-  Version: 1.0.4
+  Version: 1.0.5
   AssetBundleName: 
   ModAssembly: {fileID: 5897886265953266890, guid: f1e2d3c4b5a6478890ab1c2d3e4f5a6b,
     type: 3}

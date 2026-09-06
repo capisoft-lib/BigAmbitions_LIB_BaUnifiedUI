@@ -162,7 +162,6 @@ namespace Capisoft.Lib.BaUnifiedUI.Fluent
             var root = new GameObject(_rootName);
             try
             {
-                UnityEngine.Object.DontDestroyOnLoad(root);
                 var layoutStamp = root.AddComponent<BaUiLayoutStamp>();
                 layoutStamp.LayoutRevision = BaUiVersion.LayoutRevision;
                 BaUiChrome.SetupOverlayCanvas(root, _sortOrder, _interactive);

@@ -90,6 +90,36 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
 
         public static void MarkRebuildHandled() => ShouldRebuildHud = false;
 
+        internal static void ResetRuntimeState()
+        {
+            DestroyOwnedSprite(ref _solidSprite);
+            DestroyOwnedSprite(ref _embeddedPinOverlaySprite);
+            DestroyOwnedSprite(ref _embeddedAddOverlaySprite);
+            DestroyOwnedSprite(ref _embeddedKeybindFieldSprite);
+            DestroyOwnedSprite(ref _embeddedResetIconSprite);
+            _panelBg = null;
+            _headerBg = null;
+            _iconBg = null;
+            _btnBlue = null;
+            _btnGrey = null;
+            _btnGreen = null;
+            _btnRed = null;
+            _settingsIcon = null;
+            _pinIcon = null;
+            _addIcon = null;
+            _carIcon = null;
+            _focusIcon = null;
+            _searchIcon = null;
+            _historyIcon = null;
+            _resetIcon = null;
+            _fontRegular = null;
+            _fontBold = null;
+            _fontMedium = null;
+            _initialized = false;
+            _wasReady = false;
+            ShouldRebuildHud = false;
+        }
+
         public static void ApplyPanelBg(Image image)
         {
             ApplySliced(image, _panelBg, PanelColor, _panelBg == null ? PanelColor : White);
@@ -522,15 +552,35 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             image.preserveAspect = false;
         }
 
+        private static void Own(UnityEngine.Object obj)
+        {
+            if (obj != null)
+                obj.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        private static void DestroyOwnedSprite(ref Sprite sprite)
+        {
+            if (sprite == null)
+                return;
+
+            var texture = sprite.texture;
+            UnityEngine.Object.Destroy(sprite);
+            sprite = null;
+            if (texture != null)
+                UnityEngine.Object.Destroy(texture);
+        }
+
         private static Sprite SolidSprite()
         {
             if (_solidSprite != null)
                 return _solidSprite;
 
             var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            Own(tex);
             tex.SetPixel(0, 0, Color.white);
             tex.Apply();
             _solidSprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 100f);
+            Own(_solidSprite);
             return _solidSprite;
         }
 
@@ -557,6 +607,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
 
             const int size = 32;
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            Own(tex);
             var clear = new Color(0f, 0f, 0f, 0f);
             for (var y = 0; y < size; y++)
             {
@@ -600,6 +651,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                 new Rect(0, 0, size, size),
                 new Vector2(0.5f, 0.08f),
                 100f);
+            Own(_embeddedPinOverlaySprite);
             return _embeddedPinOverlaySprite;
         }
 
@@ -610,6 +662,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
 
             const int size = 32;
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            Own(tex);
             var clear = new Color(0f, 0f, 0f, 0f);
             const int center = 16;
             const int halfThickness = 3;
@@ -633,6 +686,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                 new Rect(0, 0, size, size),
                 new Vector2(0.5f, 0.5f),
                 100f);
+            Own(_embeddedAddOverlaySprite);
             return _embeddedAddOverlaySprite;
         }
 
@@ -646,6 +700,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
             {
                 name = "BAUI Keybind Field",
+                hideFlags = HideFlags.HideAndDontSave,
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp
             };
@@ -673,6 +728,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                 SpriteMeshType.FullRect,
                 new Vector4(radius, radius, radius, radius));
             _embeddedKeybindFieldSprite.name = "BAUI Keybind Field";
+            Own(_embeddedKeybindFieldSprite);
             return _embeddedKeybindFieldSprite;
         }
 
@@ -688,6 +744,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
             {
                 name = "BAUI Reset Icon",
+                hideFlags = HideFlags.HideAndDontSave,
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp
             };
@@ -718,6 +775,7 @@ namespace Capisoft.Lib.BaUnifiedUI.Assets
                 new Vector2(0.5f, 0.5f),
                 100f);
             _embeddedResetIconSprite.name = "BAUI Reset Icon";
+            Own(_embeddedResetIconSprite);
             return _embeddedResetIconSprite;
         }
 

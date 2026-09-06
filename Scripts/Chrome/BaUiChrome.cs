@@ -42,6 +42,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
 
         {
 
+            BaUiRuntime.MarkRoot(root);
+
             var canvas = root.AddComponent<Canvas>();
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -95,6 +97,8 @@ namespace Capisoft.Lib.BaUnifiedUI.Chrome
 
 
             SetLayerRecursive(root, LayerHelper.UiLayerIndex);
+
+            BaUiRuntime.MarkHierarchy(root);
 
         }
 

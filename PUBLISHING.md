@@ -30,10 +30,10 @@ This repository prepares the release but does not upload it. Creating the Steam 
 - In-game uploader: select the installed `LIB_BaUnifiedUI` folder and confirm the thumbnail is visible in the preview before submitting
 - Content folder: `Output/LIB_BaUnifiedUI/` (contains both the DLL and `Thumbnail.png` after the official build)
 - Preview source: `Assets/Mods/LIB_BaUnifiedUI/Thumbnail.png`
-- Summary: `releases/1.0.4/short-description.txt`
-- Description: `releases/1.0.4/full-description.md`
-- French description: `releases/1.0.4/full-description.fr.md`
-- Change notes: `releases/1.0.4/Steam_ChangeLog.md`
+- Summary: `releases/1.0.5/short-description.txt`
+- Description: `releases/1.0.5/full-description.md`
+- French description: `releases/1.0.5/full-description.fr.md`
+- Change notes: `releases/1.0.5/Steam_ChangeLog.md`
 
 Publish the library by itself first. Do not update consumer Workshop items as part of this release. Once Steam assigns the library item ID, add it to each consumer's **Required Items** when that consumer is rebuilt and published later.
 
