@@ -1,0 +1,74 @@
+using Capisoft.Lib.BaUnifiedUI.Localization;
+using Localizor;
+
+static class Program
+{
+    static int assertions;
+    static void Equal<T>(T expected, T actual)
+    {
+        assertions++;
+        if (!EqualityComparer<T>.Default.Equals(expected, actual))
+            throw new Exception($"Expected '{expected}', got '{actual}'");
+    }
+    static void Main()
+    {
+        Equal("Fast Food Restaurant", BaUiText.Loc("ba:businesstype_fastfoodrestaurant", "fallback"));
+        Equal(1, LocalizorManager.Calls);
+        Equal("fallback", BaUiText.Loc("missing", "fallback"));
+        Equal(1, LocalizorManager.Calls);
+        Equal(0, UnityEngine.Debug.Warnings);
+        Equal<string>(null, BaUiText.Loc("missing", null));
+        foreach (var key in new[] { null, "", "  " })
+        {
+            Equal("fallback", BaUiText.Loc(key, "fallback"));
+            Equal("", BaUiText.Loc(key, null));
+        }
+        foreach (var value in new[] { null, "", "  ", "ba:businesstype_fastfoodrestaurant" })
+        {
+            LocalizorManager.Text = value;
+            Equal("fallback", BaUiText.Loc("ba:businesstype_fastfoodrestaurant", "fallback"));
+        }
+        LocalizorManager.Throw = true;
+        Equal("fallback", BaUiText.Loc("ba:businesstype_fastfoodrestaurant", "fallback"));
+        Equal(1, UnityEngine.Debug.Warnings);
+        LocalizorManager.Throw = false;
+        LocalizorManager.Text = "Restauration rapide";
+        Equal("Restauration rapide", BaUiText.Loc("ba:businesstype_fastfoodrestaurant", "fallback"));
+        LocalizorManager.LoadedLocale = " fr_FR ";
+        Equal("fr-FR", BaUiText.ResolveLoadedLocale());
+        LocalizorManager.LoadedLocale = " ";
+        Equal("en", BaUiText.ResolveLoadedLocale());
+        Console.WriteLine($"PASS: {assertions} localization assertions.");
+    }
+}
+
+namespace UnityEngine
+{
+    public class Object { }
+    public static class Debug
+    {
+        public static int Warnings;
+        public static void LogWarning(string message) { Warnings++; }
+    }
+}
+namespace Localizor
+{
+    public static class LocalizorManager
+    {
+        public static int Calls;
+        public static bool Throw;
+        public static string Text = "Fast Food Restaurant";
+        public static string LoadedLocale;
+        public static bool IsLocalizedKey(string key)
+        {
+            if (Throw) throw new InvalidOperationException("Not ready");
+            return key == "ba:businesstype_fastfoodrestaurant";
+        }
+        // Match HGPlugins.dll: the context is optional, but part of the signature.
+        public static string GetLocalization(this string key, UnityEngine.Object context = null)
+        {
+            Calls++;
+            return Text;
+        }
+    }
+}
