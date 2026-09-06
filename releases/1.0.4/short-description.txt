@@ -1,0 +1,1 @@
+Shared vanilla-style UI library for Big Ambitions mods. Version 1.0.4 fixes game localization lookup and preserves quiet fallbacks for missing keys.

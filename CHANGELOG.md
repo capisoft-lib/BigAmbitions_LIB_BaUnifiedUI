@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.4] - 2026-09-06
+
+### Fixed
+
+- `BaUiText.Loc` now resolves valid game localization keys through the actual
+  Localizor API, whose context parameter is optional (issue #2).
+- Missing keys keep the caller's fallback without triggering Localizor warnings.
+
+### Compatibility
+
+- Existing public APIs, assembly identity and layout revision 33 are unchanged.
+
 ## [1.0.3] - 2026-09-06
 
 ### Fixed

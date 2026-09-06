@@ -1,0 +1,4 @@
+- Fixed BaUiText.Loc returning fallback text for valid game localization keys (issue #2).
+- Use the actual Localizor API and guard missing keys to avoid translation warnings.
+- Public APIs and assembly identity unchanged; layout revision remains 33.
+- Library version 1.0.4.
